@@ -1,0 +1,11 @@
+org.gjt.mm.mysql.Driver,MySQL
+oracle.jdbc.driver.OracleDriver,Oracle
+com.sybase.jdbc2.jdbc.SybDriver,Sybase
+org.apache.commons.dbcp.PoolingDriver,Apache Commons Pool
+sun.jdbc.odbc.JdbcOdbcDriver,ODBC
+com.microsoft.jdbc.sqlserver.SQLServerDriver,MS SQL Server
+org.apache.derby.jdbc.ClientDriver,Apache Derby
+com.informix.jdbc.IfxDriver,Informix
+net.sourceforge.jtds.jdbc.Driver,Microsoft SQL (JTDS)
+org.hsqldb.jdbcDriver,HSQLDB
+com.ibm.db2.jcc.DB2Driver,DB2

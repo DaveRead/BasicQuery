@@ -1,0 +1,780 @@
+################
+# Options De Menu #
+################
+
+# dossier
+mnuFileLabel=Dossier
+mnuFileAccel=D
+mnuFileDesc=Articles de menu liés à l'accès de dossier
+
+# dossier|Ouvert
+mnuFileOpenLabel=Ouvrez Le Dossier de SQL
+mnuFileOpenAccel=O
+mnuFileOpenDesc=Ouvrez Le Dossier De Rapport de SQL
+
+# dossier|Stat De Notation
+mnuFileLogStatsLabel=Stat De Notation
+mnuFileLogStatsAccel=S
+mnuFileLogStatsDesc=Notez la stat de chaque exécution de question {0}
+
+# dossier|Résultats De Notation
+mnuFileLogResultsLabel=Résultats De Notation
+mnuFileLogResultsAccel=N
+mnuFileLogResultsDesc=Notez les rangées résultantes de chaque exécution de question {0}
+
+# dossier|Exportation CSV
+mnuFileExportCSVLabel=Résultats d''exportation comme CSV
+mnuFileExportCSVAccel=R
+mnuFileExportCSVDesc=Économiser les résultats actuels dans un format de CSV
+
+# dossier|Économiser Des Gouttes
+mnuFileSaveBLOBLabel=Économiser Des Gouttes
+mnuFileSaveBLOBAccel=E
+mnuFileSaveBLOBDesc=Économiser tous champs de GOUTTE sur la rangée courante aux dossiers de rendement
+
+# dossier|Exportation Crue
+mnuFileRawExportLabel=Exportation Crue
+mnuFileRawExportAccel=C
+mnuFileRawExportDesc=Ne composez pas le rendement de CSV pour l''importation dans le bilan
+
+# dossier|Aucun CR ne s'est ajouté à l'exportation
+mnuFileNoCRLabel=Aucun CR ne s'est ajouté à l'exportation
+mnuFileNoCRAccel=A
+mnuFileNoCRDesc=N''ajoutez pas un retour de chariot à la fin de chaque rangée de rendement
+
+# éditez
+mnuEditLabel=Éditez
+mnuEditAccel=E
+mnuEditDesc=Articles de menu liés aux résultats manoeuvrants
+
+# éditez|Copy
+mnuEditCopyLabel=Données Choisies Par Copy
+mnuEditCopyAccel=C
+mnuEditCopyDesc=Copy les cellules choisies sur la planchette
+
+# éditez|Choisissez Tous
+mnuEditSelectAllLabel=Choisissez Toutes les Rangées
+mnuEditSelectAllAccel=T
+mnuEditSelectAllDesc=Choisissez toutes les rangées de données
+
+# éditez|Sorte par les colonnes choisies
+mnuEditSortLabel=Sorte par les colonnes choisies
+mnuEditSortAccel=S
+mnuEditSortDesc=Employez le column(s) choisi pour assortir les résultats (assortissant de droite à gauche)
+
+# question
+mnuQueryLabel=Question
+mnuQueryAccel=Q
+mnuQueryDesc=Articles de menu liés aux questions
+
+# question|Choisi
+mnuQuerySelectLabel=Choisissez Le Rapport
+mnuQuerySelectAccel=C
+mnuQuerySelectDesc=Créez le rapport choisi des colonnes courantes
+
+# question|Insertion
+mnuQueryInsertLabel=Insérez Le Rapport
+mnuQueryInsertAccel=I
+mnuQueryInsertDesc=Créez le rapport d''insertion des colonnes courantes
+
+# question|Mise à jour
+mnuQueryUpdateLabel=Rapport De Mise à jour
+mnuQueryUpdateAccel=R
+mnuQueryUpdateDesc=Créez le rapport de mise à jour des colonnes courantes
+
+# question|Choisissez *
+mnuQuerySelectStarLabel=Choisissez *
+mnuQuerySelectStarAccel=H
+mnuQuerySelectStarDesc=Créez 'choisissent * à partir' pour la colonne choisie
+
+# question|Décrivez Choisi *
+mnuQueryDescSelectStarLabel=Décrivez Choisi *
+mnuQueryDescSelectStarAccel=D
+mnuQueryDescSelectStarDesc=Décrivez les colonnes de 'choisissent * à partir' pour la colonne choisie
+
+# question|Commandez à nouveau
+mnuQueryReorderLabel=Commandez à nouveau Les Questions
+mnuQueryReorderAccel=N
+mnuQueryReorderDesc=Commandez à nouveau manuellement l'ensemble de questions apprises par coeur
+
+# question|Courez Tous
+mnuQueryRunAllLabel=Courez Toutes les Questions
+mnuQueryRunAllAccel=T
+mnuQueryRunAllDesc=Courez toutes les questions dans la liste
+
+# installé
+mnuSetupLabel=Installation
+mnuSetupAccel=I
+mnuSetupDesc=Options de configuration d'application
+
+# installé|Langue
+mnuSetupLanguageLabel=Langue
+mnuSetupLanguageAccel=L
+mnuSetupLanguageDesc=Placez la langue bien choisie
+
+# installé|Langue|Défaut De Système
+mnuSetupLanguageDefaultLabel=Défaut De Système
+mnuSetupLanguageDefaultAccel=D
+mnuSetupLanguageDefaultDesc=Choisissez la langue basée sur la valeur par défaut de système
+
+# Installation|Police
+mnuConfigFontLabel=Police
+mnuConfigFontAccel=P
+mnuConfigFontDesc=Placez la police utilisée pour l'affichage
+
+# installé|Information De Serveur de DB D'Affichage
+mnuSetupDBServerLabel=Information De Serveur de DB D'Affichage
+mnuSetupDBServerAccel=I
+mnuSetupDBServerDesc=Rapportez le metadata de serveur de DB en exécutant des questions
+
+# installé|Information De Serveur de DB D'Affichage|Dossier
+mnuSetupDBServerBriefLabel=Dossier
+mnuSetupDBServerBriefAccel=D
+mnuSetupDBServerBriefDesc=Rapportez les détails à niveau élevé de serveur de DB
+
+# installé|Information De Serveur de DB D'Affichage|Long
+mnuSetupDBServerLongLabel=Long
+mnuSetupDBServerLongAccel=L
+mnuSetupDBServerLongDesc=Rapportez tous les détails de serveur de DB
+
+# installé|Information De Serveur de DB D'Affichage|Aucun
+mnuSetupDBServerNoneLabel=Aucun
+mnuSetupDBServerNoneAccel=A
+mnuSetupDBServerNoneDesc=Ne rapportez pas les détails de serveur de DB
+
+# installé|Coloration De Rangée De Résultats
+mnuSetupRowColorLabel=Coloration De Rangée De Résultats
+mnuSetupRowColorAccel=C
+mnuSetupRowColorDesc=Commandez la coloration des rangées de table de résultat
+
+# installé|Coloration De Rangée De Résultats|Aucun
+mnuSetupRowColorNoneLabel=Aucun
+mnuSetupRowColorNoneAccel=A
+mnuSetupRowColorNoneDesc=Coloration de défaut des rangées de résultats
+
+# installé|Coloration De Rangée De Résultats|Barre Verte
+mnuSetupRowColorGreenBarLabel=Vert/Blanc Alternatif
+mnuSetupRowColorGreenBarAccel=V
+mnuSetupRowColorGreenBarDesc=Remplacement de rangées entre le fond vert et blanc
+
+# installé|Coloration De Rangée De Résultats|Barre Jaune
+mnuSetupRowColorYellowBarLabel=Jaune/Blanc Alternatif
+mnuSetupRowColorYellowBarAccel=J
+mnuSetupRowColorYellowBarDesc=Remplacement de rangées entre le fond jaune et blanc
+
+# installé|Coloration De Rangée De Résultats|Utilisateur Défini
+mnuSetupRowColorUserDefLabel=Utilisateur Défini
+mnuSetupRowColorUserDefAccel=U
+mnuSetupRowColorUserDefDesc=Les rangées ont coloré basé sur des valeurs définies par utilisateur dans le dossier de propriété
+
+# installé|Assoc SQL et URL
+mnuSetupAssocSQLURLLabel=Associez le SQL et reliez le URL dans la liste d'histoire
+mnuSetupAssocSQLURLAccel=A
+mnuSetupAssocSQLURLDesc=La cause relient le choix au changement basé sur le SQL quand l'histoire prev/next est employée
+
+# installé|Type De Colonne D'Affichage
+mnuSetupDispColTypeLabel=Type De Données De Colonne D'Affichage
+mnuSetupDispColTypeAccel=T
+mnuSetupDispColTypeDesc=Incluez le datatype de colonne et le classez dans l'en-tête de colonne
+
+# installé|Information De Client D'Affichage
+mnuSetupClientInfoLabel=Information De Client D'Affichage
+mnuSetupClientInfoAccel=C
+mnuSetupClientInfoDesc=Montrez l'information de client (mémoire de VM) dans la zone message
+
+# installé|Économiser Le Mot de passe
+mnuSetupSavePasswordLabel=Économiser Le Mot de passe
+mnuSetupSavePasswordAccel=E
+mnuSetupSavePasswordDesc=Économiser le mot de passe avec l'information de configuration
+
+# aide
+mnuHelpLabel=Aide
+mnuHelpAccel=A
+mnuHelpDesc=L'information et aide d'application
+
+# aide|SQL Paramétrisé
+mnuHelpParamSQLLabel=Rapports Paramétrisés de SQL
+mnuHelpParamSQLAccel=P
+mnuHelpParamSQLDesc=L'information sur créer des rapports paramétrisés deSQL
+
+# aide|Au sujet de
+mnuHelpAboutLabel=Au sujet de
+mnuHelpAboutAccel=A
+mnuHelpAboutDesc=L'information de version
+
+###########
+# incite #
+###########
+
+# Message de sollicitation D'Identification de l'utilisateur
+proUserId=Identification de l'utilisateur:
+
+# Message de sollicitation De Mot de passe
+proPassword=Mot de passe:
+
+# Type De Question
+proQueryType=Type De Question:
+
+# Rangées Maximum
+proMaxRows=Rangées Maximum:
+
+# Aucune Limite
+proNoLimit=Aucune Limite
+
+# Nom De Colonne
+proColumnName=Nom
+
+# Type De Colonne
+proColumnType=Type
+
+# Longueur De Colonne
+proColumnLength=Longueur
+
+# Précision De Colonne
+proColPrecision=Précision
+
+# Balance De Colonne
+proColScale=Balance
+
+# La Colonne Laisse Annule
+proColNullsAllowed=Annule Laissé
+
+# Valeur De Colonne Éliminée
+proColUndefined=Non défini
+
+# Type De Données-caractères
+proColCharType=Char
+
+# Type De Données Numérique
+proColNumeric=Nombre
+
+# oui
+proYes=Oui
+
+# non
+proNo=Non
+
+# inconnu
+proUnknown=Inconnu
+
+# en-tête pour des statistiques exportées de question
+proQueryStatsExportHeader="Questionnez Num","Questionnez","Date","temps de raccordement (ms)",\
+"temps d'accès de rapport (ms)","Rapport a installé le temps (ms)","temps de Base de données (ms)",\
+"cherchent le temps (ms)","temps de processus (ms)","temps total (ms)",\
+"Colonnes","Rangées","Rangées Maximum","Mémoire Assignée","Mémoire Libre",\
+"a employé Mémoire","Mémoire maximum","des processeurs"
+
+# additions d'en-tête pour des statistiques exportées de question en utilisant des paramètres
+proQueryStatsExportHeaderParam=,"Paramètre {0}"
+
+# Valeur Non applicable
+proValueNotApplicable=N/A
+
+# Temps Ouvert De Raccordement
+proTimeConnOpen=Temps Ouvert De Raccordement: {0} mme.
+
+# Temps D'Accès De Rapport
+proTimeStmtAccess=Temps D''Accès De Rapport: {0} mme.
+
+# Temps D'Installation De Rapport
+proTimeStmtSetup=Temps D''Installation De Rapport: {0} mme.
+
+# Temps D'Exécution de DB
+proTimeDBExecute=Temps D''Exécution de Base de données: {0} mme.
+
+# Les Résultats Cherchent Le Temps
+proTimeResultsFetch=Cherchez Le Temps: {0} mme.
+
+# Temps De processus De ResultSet
+proTimeResultSet=Temps De processus de RS: {0} mme.
+
+# Stat De Synchronisation de DB
+proTimeDBStats=Statistiques De Base de données:
+
+# Temps Total D'Exécution
+proTimeTotal=Temps Total : {0} mme.
+
+# Mémoire Assignée
+proMemAlloc=Mémoire Assignée: {0}
+
+# Mémoire Librement
+proMemFree=Mémoire Libre: {0}
+
+# Mémoire Utilisée
+proMemUsed=Mémoire utilisé: {0}
+
+# Mémoire Maximum
+proMemMax=Mémoire Maximum: {0}
+
+# Processeurs De Client
+proProcessors=Processeurs: {0}
+
+# Environnement De Client
+proClientEnv=Environnement de client:
+
+############
+# commande #
+############
+
+# Bouton De Prev
+ctlPrev=Précédent
+
+# Après Bouton
+ctlNext=Après
+
+# L'Automobile Commettent Checkbox
+ctlAutoCommit=Automatique Commettez
+
+# Lisez Seulement Checkbox
+ctlReadOnly=Lu Seulement
+
+# Raccordement Checkbox Mettant en commun
+ctlConnPool=La Piscine Se relient
+
+# Indicateur Courant De Question
+ctlRunning=Courir
+
+# Bouton Par radio Choisi
+ctlSelect=Choisi
+
+# Bouton Par radio De Mise à jour
+ctlUpdate=Mise à jour
+
+# Décrivez Le Bouton Par radio
+ctlDescribe=Décrivez
+
+# Exécutez Le Bouton
+ctlExecute=Exécutez
+
+# Enlevez Le Bouton
+ctlRemove=Enlevez
+
+# Bouton De Commentaire
+ctlComment=Commentaire
+
+# Bouton D'Uncomment
+ctlUncomment=Enlevez Commentaire
+
+# Boutonnez Vers le bas
+ctlDown=Vers le bas
+
+# Commandez à nouveau la zone de dialogue - relevez-vous
+ctlReorderSQLMoveUp=Se relèvent
+
+# Commandez à nouveau la zone de dialogue - abaissez
+ctlReorderSQLMoveDown=Abaissent
+
+# Commandez à nouveau la zone de dialogue - correcte
+ctlReorderSQLOkay=OK
+
+# Commandez à nouveau la zone de dialogue - annulation
+ctlReorderSQLCancel=Annulation
+
+############
+# Tooltips #
+############
+
+# en-tête de colonne de Clic à assortir
+tipClickHeaderToSort=Cliquez une colonne pour assortir les données, Shift-clic pour assortir dans l'ordre décroissant
+
+# Bouton De Prev
+tipPrev=Revenez à la question précédente qui a été exécutée
+
+# Après Bouton
+tipNext=Allez à la prochaine question qui a été exécutée
+
+########################
+# Messages Opérationnels #
+########################
+
+# Conducteur Dir de DB
+msgDBDriverDir=Employer des conducteurs de DB de: {0}
+
+# Conducteurs de DB Localisés
+msgDBDriverLocated=Archives De Conducteur Localisées: {0}
+
+# Conducteur de DB Chargé
+msgDriverLoaded={0} conducteurs chargés
+
+# La Question A commenté Dehors - Texte De Dialogue
+msgSQLCommentedText=La question choisie est Commenté.\nLente ne peut pas être exécutée.
+
+# La Question A commenté Dehors - Titre De Dialogue
+msgSQLCommentedTitle=Aucune Question
+
+# Type De Question Soupçonneux
+msgQueryTypeSuspicious=Le type de question est suspect : Le type choisi est [ {0} ] mais le SQL commence par [ {1} ]
+
+# Type De Question Soupçonneux - Texte De Dialogue
+msgQueryTypeSuspiciousText=Le type choisi de question ne semble pas être conforme \
+\nau rapport de SQL fourni. \
+\n \
+\nLe type de question est: {0} \
+\nLe mot-clé de SQL est: {1} \
+\n \
+\nVoulez-vous forcer la question pour fonctionner avec ce choix?
+
+# Type De Question Soupçonneux - Titre De Dialogue
+msgQueryTypeSuspiciousTitle=Question de force à courir
+
+# Utilisateur Forçant Le Type Suspect De Question
+msgUserForcingQuery=Utilisateur forçant la question pour s'exécuter avec le type suspect choix de question
+
+# Exécution De Question Décommandée
+msgQueryCanceled=Exécution de question décommandée
+
+# Exécutez La Question
+msgExecuteQuery=Exécutez {0} : {1}
+
+# question
+msgQuery=Question
+
+# décrivez
+msgDescribe=Décrivez
+
+# mise à jour
+msgUpdate=Mise à jour
+
+# Stat De Piscine
+msgPoolStats=Stat De Piscine de DB:
+
+# Compte De Stat De Piscine
+msgPoolStatsCount=Actif:{0} Ralenti:{1}
+
+# Aucune Piscine de DB
+msgPoolNone=Aucune Piscine Créée
+
+# Détails De Création De Raccordement
+msgConnCreated=Raccordements:{0} Utilisateur:{1}
+
+# A obtenu Le Raccordement De Piscine de DB
+msgGotPoolConn=Obtiennent le raccordement mis en commun
+
+# Raccordement Direct Obtenu de DB
+msgGotDirectConn=Obtiennent le raccordement non-mis en commun
+
+# Arrangement Maximum De Rangée
+msgMaxRows=Rangées maximum réglées à {0}
+
+# colonne anonyme
+msgUnnamedColumn=Étiquette[{0}]
+
+# L'Information De Serveur de DB
+msgDBServerInfo=L''Information De Serveur De Base de données
+
+# l'information de serveur de DB est un agrégat (placez des rangées)
+msgSetOfRows=(placez des rangées)
+
+# L'information de serveur de base de données est (placez des rangées)
+msgSetOfValues=(placez de {0} valeurs)
+
+# HORS Du Paramètre
+msgOutParam=Hors Du Param
+
+# Param Varchar
+msgParamString=(corde {0}) :
+
+# Nombre entier De Param
+msgParamInteger=(nombre entier {0}) :
+
+# Type De Défaut De Param
+msgParamDefault=(défaut {0}) :
+
+# Boucle De Recherche De Param - SQL Avant
+msgParamSearchLoopBefore=Dans la boucle de recherche de PARAM, le SQL est : {0}
+
+# Boucle De Recherche De Param - SQL Ensuite
+msgParamSearchLoopAfter=Après le décodage des paramètres, le SQL est : {0}
+
+# DANS Le Paramètre Desc
+msgParamInDesc=Dans Le Paramètre : {0}:{1}
+
+# HORS Du Paramètre Desc
+msgParamOutDesc=Hors Du Paramètre : {0}
+
+# GOUTTE Écrite - Texte De Dialogue
+msgBLOBWrittenText=A écrit BLOB(s) to:\n\n{0}
+
+# GOUTTE Écrite - Titre De Dialogue
+msgBLOBWrittenTitle=Données de GOUTTE Écrites
+
+# Rapport de SQL Construit Par Rapport
+msgMadeSQL=Faites le SQL : {0}
+
+# nombre d'exécutions de question
+msgNumExecutions=Nombre d''exécutions : {0}
+
+# L'information de serveur de base de données est (placez des rangées)
+msgSetOfValues=(placez de {0} valeurs)
+
+# Rows
+msgRows=Rangées:
+
+# valeur de retour
+msgReturnValue=Valeur de retour
+
+###################
+# Messages De Dialogue #
+###################
+
+# Économiser Des Données - Titre De Dialogue
+dlgSaveDataTitle=Économiser Des Données
+
+# Économiser Des Données - Étiquette De Bouton D'Action De Dialogue
+dlgSaveDataButton=Économiser
+
+# Économiser Des Données - Mnémonique De Bouton D'Action De Dialogue
+dlgSaveDataButtonMnemonic=S
+
+# Vérifiez Recouvrent - Le Texte De Dialogue
+dlgVerifyOverwriteText=Le dossier vous avez choisi exists:\n\n{0}\n\nOkay pour recouvrir ?
+
+# Vérifiez Recouvrent - Le Titre De Dialogue
+dlgVerifyOverwriteTitle=Le Dossier Existe
+
+# Courez Toutes les Questions - Texte De Dialogue
+dlgAllQueriesText=Combien de fois vous veulent chaque executed? \
+\n \
+\n de question Employez une valeur positive pour exécuter l'ensemble de queries \
+\ndans l''ordre le nombre donné de times. \
+\n \
+\nEmployez un nombre négatif pour exécuter chaque query \
+\nle nombre de valeur absolue de times \
+\npassez alors au prochain query. \
+\n \
+\nExemple pour 2 queries: \
+\n  2: La Question 1, La Question 2, La Question 1, La Question 2 \
+\n -2: La Question 1, La Question 1, La Question 2, La Question 2
+
+# Courez Toutes les Questions - Titre De Dialogue
+dlgAllQueriesTitle=Nombre d'exécutions
+
+# Courez Toutes les Questions - Titre De Moniteur De Progrès
+dlgRunAllQueriesProgressTitle=Exécution Des Questions
+
+# Courez Toutes les Questions - Note De Moniteur De Progrès
+dlgRunAllQueriesProgressNote=Itération {0} de {1} : Question {2} de {3}  l''évaluation restante de temps: (calcul)
+
+# courez toutes les questions - note de moniteur de progrès avec l'évaluation restante de temps
+dlgRunAllQueriesProgressNoteWithRemainTime=Itération {0} de {1} : Question {2} de {3}  l''évaluation restante de temps: {4}:{5}:{6}
+
+# exécutions de question décommandées par User - texte de dialogue
+dlgExecutionsCanceledText=Exécution des questions décommandées par l'utilisateur.
+
+# exécutions de question décommandées par User - titre de dialogue
+dlgExecutionsCanceledTitle=Opération Décommandée
+
+# Exécutions De Question Accomplies = Texte De Dialogue
+dlgExecutionsCompletedText=Exécution réalisée de tous questions.
+
+# Exécutions De Question Accomplies - Titre De Dialogue
+dlgExecutionsCompletedTitle=Complet
+
+# aucunes questions pour exécuter - le texte de dialogue
+dlgExecutionsNoneText=Aucunes questions exécutées.
+
+# aucunes questions pour exécuter - le titre de dialogue
+dlgExecutionsNoneTitle=Décommandé
+
+# Dossier Choisi de SQL - Titre De Dialogue De Dossier
+dlgSQLFileTitle=Choisissez Le Dossier De Rapport de SQL
+
+# Nouveau Dossier de SQL - Texte De Dialogue
+dlgNewSQLFileText=Le dossier {0} exist. \
+\n \
+\nThe ne place pas des rapports de SQL peut ou commencer le prepopulated \
+\nwith les rapports courants de SQL ou empty. \
+\n \
+\nWould que vous aimez employer l'ensemble courant de statements \
+\nas de SQL par point de départ pour ce nouveau dossier de SQL ?
+
+# Nouveau Dossier de SQL - Titre De Dialogue
+dlgNewSQLFileTitle=Créer Le Nouveau Dossier de SQL
+
+# Annulation Courant Actuellement La Question - Texte De Dialogue
+dlgCancelQueryText=Il y a une question fonctionnant actuellement. \
+Vous devez décommander \
+\nla question courante afin d'exécuter another. \
+\n \
+\nDo que vous voulez décommander la question fonctionnante actuellement ?
+
+# Annulation Courant Actuellement La Question - Titre De Dialogue
+dlgCancelQueryTitle=Décommandez La Question Courante
+
+# Aucunes Bibliothèques De Conducteur de DB Chargées - Texte De Dialogue
+dlgNoDBDriversLoadedText=Aucun conducteur externe de base de données n''a été loaded. \
+\n \
+\nIl y a deux étapes exigées au connect to un database: \
+\n \
+\n1) assurent le file d''archives de conducteur de DB (JAR ou ZIP) \
+\n2) enregistrent le driver\n \
+\nL''annuaire courant pour le DB cogne is: \
+\n{0} \
+\n \
+\nLes conducteurs sont enregistrés en mettant le dossier: \
+\n{1}
+
+# Aucunes Bibliothèques De Conducteur de DB Chargées - Titre De Dialogue
+dlgNoDBDriversLoadedTitle=Aucun Conducteur De Base de données N''a été chargé
+
+# A paramétrisé L'Aide De Question - Vue d'ensemble Des Textes De Dialogue
+dlgUsingParamsTextOverview=BasicQuery soutient l'utilisation du SQL paramétrisé.  Le may \
+\nde paramètres soyez DANS ou HORS des paramètres. Des paramètres \
+\npeuvent être employés pour choisi et mettent à jour queries. \
+\nLe format pour DANS le paramètre est :$PARAM[IN, DATATYPE, DONNÉES]$ \
+\n est IN littéral des textes \
+\n DATATYPE est défini DATATYPE (ci-dessous énuméré) \
+les DONNÉES de \n sont les données (texte, nombre) que vous fournissez dans le parameter \
+\n \
+\nLe format pour un paramètre de SORTIE est :$PARAM[OUT, DATATYPE]$ \
+\n le DEHORS est OUT littéral des textes \
+\n le DATATYPE est un DATATYPE défini énuméré \
+\nNotez qu''hors des paramètres ayez leurs valeurs montrées dans la zone message au bottom \
+\ndu BasicQuery window. \
+\nles valeurs du Known DATATYPE sont :
+
+# A paramétrisé L'Aide De Question - Exemple Des Textes De Dialogue
+dlgUsingParamsTextExamples=\n\nDe Rapports de SQL Paramétrisé Par Example: \
+\n \
+\n choisi * des all_objects où l''object_type aiment #, corde, func%]$ \
+le \n ceci a comme conséquence où clause d''object_type = '?' et ensembles un param d''FUNC%' \
+\n \
+\n $PARAM[OUT,INTEGER]$ = {appel test_func($PARAM[IN, STRING, DONNÉES]$, $PARAM[OUT, INTEGER]$ \
+\n ou, selon votre, de plateforme \
+\n $PARAM[OUT, INTEGER]$ = appelez test_func($PARAM[IN, STRING, DONNÉES]$, $PARAM[OUT, INTEGER]$ \
+le \n ceci appelle le test_func de fonction avec le serrage de 'DONNÉES 'de valeur de param \
+\n la valeur de retour de nombre entier et le paramètre de sortie, les montrant \
+\n dans la zone message au fond de la fenêtre.
+
+# A paramétrisé L'Aide De Question - Titre De Dialogue
+dlgUsingParamsTitle=Employer le SQL Paramétrisé
+
+# Commandez à nouveau le titre de dialogue
+dlgReorderDlgTitle=Commandez à nouveau Les Questions
+
+# Zone De Dialogue Bien choisie De Police
+dlgFontChooserTitle=Choisissez La Police
+dlgFontChooserBold=Plus foncée
+dlgFontChooserItalic=Italique
+dlgFontChooserFontSize=Taille De Police
+dlgFontChooserSampleText=Voici un certain texte témoin
+dlgFontChooserOkay=OK
+dlgFontChooserCancel=Annulation
+
+#################
+# Message D'Erreur #
+#################
+
+# aucunes archives de FIOLE ou de FERMETURE ÉCLAIR trouvées
+errNoJARZIP=Aucunes archives de FIOLE ou de FERMETURE ÉCLAIR trouvées
+
+# Aucune Bibliothèque Mettante en commun Trouvée
+errNoPoolLib=Aucune bibliothèque mettante en commun trouvée, mettre de raccordement ne sera soutenue
+
+# A échoué Des Config D'Utilisateur Économiser
+errFailSaveUserConfig=N''a pas sauvé la configuration d''utilisateur : {0}
+
+# A échoué La Charge De Config D''Utilisateur
+errFailLoadUserConfig=Aucun dossier de propriété chargé : {0}
+
+# n'installent pas la piscine de DB
+errFailSetupDBPool=N''a pas installé la piscine de raccordement de DB : {0}
+
+# ne ferment pas la piscine de DB
+errFailCloseDBPool=N''a pas fermé la piscine de DB : {0}
+
+# conducteurs de DB de chargement des erreurs
+errFailLoadingDBDrivers=Conducteurs de chargement des erreurs dedans {0}
+
+# Conducteur de DB Non trouvé
+errDriverNotFound={0} conducteurs non trouvés
+
+# ne peut pas placer des rangées maximum
+errFailSetMaxRows=Incapable de placer des rangées maximum à {0} : {1}
+
+# ne peut pas rechercher le nom de table
+errFailReqTableName=Erreur demandant le nom de table : {0}
+
+# Données De Lecture d'erreurs
+errFailDataRead=Données de lecture d''erreurs à row/col {0} : {1}
+
+# Erreur Exécutant Le Rapport de SQL
+errFailSQL=N''a pas exécuté la question : {0} : {1}
+
+# Erreur Exécutant Le Message De Dialogue De Rapport de SQL
+errFailSQLText=N''a pas exécuté query\n\n{0}
+
+# Erreur Exécutant Le Titre De Dialogue De Rapport de SQL
+errFailSQLTitle=La Question Échoue
+
+# Erreur Cherchant Des Résultats Additionnels
+errFailAddlResults=L''erreur s''est produite vérifiant plus des résultats : {0} : {1}
+
+# Avertissement De Rapport
+errStmtWarning=Avertissement De Rapport : {0}
+
+# Avertissement De Raccordement
+errConnWarning=Avertissement De Raccordement : {0}
+
+# Erreur D'Accédant De Metadata De Serveur de DB
+errDBServerMetaError={0} (Error-{1} : {2})
+
+# Erreur De Metadata De Serveur de DB
+errFailDBServerMeta=Erreur recherchant le serveur Metadata de DB : {0} : {1}
+
+# Lecture d'erreurs HORS De Paramètre
+errFailReadingOutParam=Paramètre de rendement de lecture d''erreurs ({0}) : {1}
+
+# Erreur S'enregistrant HORS Du Paramètre
+errFailRegisterOutParam=Erreur enregistrant le paramètre de rendement {0} : {1}
+
+# Dossier De Statistiques D'Écriture D'Erreur
+errFailWriteStatsFile=N''a pas écrit le dossier de statistiques ({0}) : {1}
+
+# choisissez seulement une rangée pour la fonction choisie - texte de dialogue
+errChooseOneRowText=Vous devez avoir seulement une utilisation de chosen\nto de rangée cette fonction.
+
+# choisissez seulement une rangée pour la fonction choisie - titre de dialogue
+errChooseOneRowTitle=Choisissez Une Rangée Seulement
+
+# l'erreur n'a pas écrit le dossier de GOUTTE
+errFailBLOBWrite=N''a pas écrit le dossier de GOUTTE : {0} : {1}
+
+# choisissez seulement une cellule pour la fonction choisie - texte de dialogue
+errChooseOneCellText=Vous devez avoir seulement une utilisation de chosen\nto de cellules cette fonction.
+
+# choisissez seulement une cellule pour la fonction choisie - titre de dialogue
+errChooseOneCellTitle=Choisissez Une Cellule Seulement
+
+# Aucunes Données En Cellule - Texte De Dialogue
+errNoDataInCellText=Il n''y a aucune valeur dans la cellule choisie.
+
+# Aucunes Données En Cellule - Titre De Dialogue
+errNoDataInCellTitle=Aucunes données en cellule
+
+# Aucun Nom de fichier Fourni N'écrira Le Dossier - Texte De Dialogue
+errNoFileNameWriteText=Aucun nom de fichier fourni, n''écrira des données
+
+# Aucun Nom de fichier Fourni N'écrira Le Dossier - Titre De Dialogue
+errNoFileNameWriteTitle=Ne peut pas Écrire Le Dossier
+
+# erreur préparant pour sauver des données
+errFailDataSavePrep=Erreur préparant pour sauver des données : {0}
+
+# Données D'Économie D'Erreur
+errFailDataSave=Données d''économie d''erreur : {0}
+
+# données copiantes d'erreur à la planchette - texte de dialogue
+errClipboardCopyDataText=N''a pas copié des données au clipboard\n\n{0}\n{1}
+
+# données copiantes d'erreur à la planchette - titre de dialogue
+errClipboardCopyDataTitle=Données Copiantes D'Erreur
+
+# Erreur Pendant L'Exportation
+errFailDuringExport=Erreur pendant l''exportation : {0}
+
+# Erreur avec la définition définie pour l'utilisateur de couleur
+errUserDefinedColorError=N'a pas ajouté la couleur de rangée plaçant pour le premier plan ({0}) et le fond ({1}): {2}
+
+# Error with user-defined color definition parsing
+errUserDefinedColorErrorParse=Incapable d''analyser la définition de couleur pour {0}

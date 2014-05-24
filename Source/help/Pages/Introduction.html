@@ -1,0 +1,37 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <link rel="stylesheet" href="../BasicQuery.css" type="text/css"><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>BasicQuery Introduction</title>
+<!--
+ * Copyright: Copyright (c) 2004, David Read
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-->
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1>Introduction to BasicQuery</h1>
+
+<p>BasicQuery is a Java-based application used to access databases through JDBC.  It features a Swing-based GUI and includes capabilities useful to developers when testing SQL statements against a database.  It also produces timing information, which is valuable during tuning exercises.  Development on BasicQuery began in early 2003 and it has been used on various projects since then.</p>
+
+<p>We have leveraged BasicQuery in diverse situations which involved debugging, testing, and performance tuning.  Key features of the application include easy access to each SQL statement entered; ability to save sets of SQL statements in separate files; support for parameterized statements; a provision for multiple return values; execution of sets of statements; storage of each connect URL used; and exporting of results, both data output and timing details, to a CSV file.  Given its Java heritage, BasicQuery has been used successfully on multiple platforms.</p>
+
+<p>BasicQuery can use any JDBC-compliant driver.  The list of drivers to be loaded is stored in a parameter file.  The driver packages themselves are loaded dynamically at startup from a user-configurable location.  We regularly access MySQL, Oracle, and Sybase databases.  The Apache Jakarta Commons Pool Library can be used, allowing timing tests to reflect the impact of pooled versus non-pooled connections.</p>
+
+<p>Our goal is to see BasicQuery grow to incorporate more developer-friendly features.  A few of the more recent additions revolve around generation of queries based on previous results.  We also intend to leverage metadata, thereby supporting schema copies and comparisons.  The inclusion of XML input and output is also high on the list.  Finally, the integration of JavaHelp is becoming crucial due to the increasing number of features.</p>
+
+</body>
+</html>

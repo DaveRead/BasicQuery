@@ -1,0 +1,72 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <link rel="stylesheet" href="../BasicQuery.css" type="text/css"><meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <title>BasicQuery Introduction</title>
+<!--
+ * Copyright: Copyright (c) 2004, David Read
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-->
+</head>
+<body bgcolor="#FFFFFF">
+
+<h1>Parameterized Statements</h1>
+
+<p>Basic Query supports the use of parameterized SQL.  The parameters may
+be IN or OUT parameters.  Parameters may be used for select and update queries.</p>
+<h2>IN Parameter</h2>
+<p>The format for an IN parameter is: <strong>$PARAM[IN,<em>DATATYPE</em>,<em>DATA</em>]$</strong>
+<ul>
+<li><strong>IN</strong> is the literal text IN
+<li><em>DATATYPE</em> is a defined DATATYPE (listed below)
+<li><em>DATA</em> is the data (text, number) you are supplying in the parameter
+</ul>
+<h2>OUT Parameter</h2>
+The format for an OUT parameter is: <strong>$PARAM[OUT,<em>DATATYPE</em>]$
+<ul>
+<li><strong>OUT</strong> is the literal text OUT
+<li><em>DATATYPE</em> is a defined DATATYPE (listed below)
+</ul>
+<p><em>Note that OUT parameters have their values displayed in the message area at the bottom
+of the Basic Query window.</em></p>
+<h2>Defined DATATYPE Values</h2>
+<p>Known DATATYPE values are:</p>
+<ul>
+<li>BOOLEAN
+<li>CHAR
+<li>DATE
+<li>DECIMAL
+<li>DOUBLE
+<li>FLOAT
+<li>INTEGER
+<li>NULL
+<li>STRING
+</ul>
+
+<h2>Examples</h2>
+<p>Example Parameterized SQL Statements:</p>
+<h3>IN Parameter</h3>
+<p>select * from all_objects where object_type like $PARAM[IN,STRING,FUNC%]$</p>
+<p>This results in a where clause of 'object_type = '?' and sets a param of 'FUNC%'</p>
+<h3>IN and OUT Parameters</h3>
+<p>$PARAM[OUT,INTEGER]$ = {call im_worktodo($PARAM[IN,STRING,DPR]$}</p>
+<p>This calls the stored procedure im_worktodo with the param value 'DPR' capturing
+the integer return value and displaying it in the message area at the bottom of
+the window.</p>
+
+</body>
+</html>
+

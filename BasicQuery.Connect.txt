@@ -1,0 +1,8 @@
+jdbc:mysql://SERVER:PORT/DATABASE
+jdbc:sybase:Tds:SERVERNAME:PORT/DATABASE
+jdbc:oracle:thin:@SERVER:PORT:INSTANCE
+jdbc:oracle:oci:@TNSNAME
+jdbc:derby://HOSTNAME:1527/MyDb
+jdbc:informix-sqli://HOSTNAME:PORT/<database_name>:INFORMIXSERVER=<server_name>
+jdbc:hsqldb:hsql://HOSTNAME:PORT/MyDb
+jdbc:db2://SERVER:PORT/INSTANCE

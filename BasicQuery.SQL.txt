@@ -1,0 +1,5 @@
+commit[1
+rollback[1
+show tables[0
+select * from all_tables[0
+{call sp_help}[0
