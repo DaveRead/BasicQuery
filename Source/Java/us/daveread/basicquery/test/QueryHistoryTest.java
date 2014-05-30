@@ -2,69 +2,138 @@ package us.daveread.basicquery.test;
 
 import javax.swing.table.DefaultTableModel;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import us.daveread.basicquery.QueryHistory;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2006</p>
- *
- * <p>Company: </p>
- *
+ * <p>
+ * Title: Test the query history class
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2006-2014
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
  * @author David Read
- * @version $Id: QueryHistoryTest.java,v 1.2 2006/05/04 03:38:48 daveread Exp $
  */
 public class QueryHistoryTest extends TestCase {
-  private QueryHistory hist;
-
-  private static String[][] tableData = { {"Row 0, Col 0", "Row 0, Col 1"},
-      {"Row 1, Col 0", "Row 1, Col 1"}, {"Row 2, Col 0", "Row 2, Col 1"},
+  /**
+   * Test index for the URL
+   */
+  private static final int URL_INDEX = 22;
+  
+  /**
+   * Test index for the SQL statement
+   */
+  private static final int SQL_STATEMENT_INDEX = 14;
+  
+  /**
+   * Test data for result set 1
+   */
+  private static final String[][] TEST_TABLE_DATA = {
+      {
+          "Row 0, Col 0", "Row 0, Col 1"
+      },
+      {
+          "Row 1, Col 0", "Row 1, Col 1"
+      },
+      {
+          "Row 2, Col 0", "Row 2, Col 1"
+      }
   };
 
-  private static String[][] tableData2 = { {"R0, C0", "R0, C1"}, {"R1, C0",
-      "R1, C1"}, {"R2, C0", "R2, C1"},
+  /**
+   * Test data for result set 2
+   */
+  private static final String[][] TEST_TABLE_DATA_2 = {
+      {
+          "R0, C0", "R0, C1"
+      },
+      {
+          "R1, C0", "R1, C1"
+      },
+      {
+          "R2, C0", "R2, C1"
+      }
   };
 
-  private static String[] columnNames = {
+  /**
+   * Column names for the test data
+   */
+  private static final String[] TEST_COLUMN_NAMES = {
       "Column 0", "Column 1"
   };
 
+  /**
+   * The query history instance to test
+   */
+  private QueryHistory hist;
+  
+  /**
+   * Setup the test case instance
+   */
   public QueryHistoryTest() {
   }
 
+  /**
+   * Setup the test
+   */
   public void setUp() {
-    hist = new QueryHistory(1, 5, new DefaultTableModel(tableData, columnNames));
+    hist = new QueryHistory(1, 5, new DefaultTableModel(TEST_TABLE_DATA, TEST_COLUMN_NAMES));
   }
 
+  /**
+   * Test getting the index for the connection URL
+   */
   public void testGetURLIndex() {
     assertEquals(5, hist.getURLIndex());
   }
 
+  /**
+   * Test getting the index for the SQL statement
+   */
   public void testGetSQLIndex() {
     assertEquals(1, hist.getSQLIndex());
   }
 
+  /**
+   * Set the index for the connection URL
+   */
   public void testSetURLIndex() {
-    hist.setURLIndex(22);
-    assertEquals(22, hist.getURLIndex());
+    hist.setURLIndex(URL_INDEX);
+    assertEquals(URL_INDEX, hist.getURLIndex());
   }
 
+  /**
+   * Set the index for the SQL statement
+   */
   public void testSetSQLIndex() {
-    hist.setSQLIndex(14);
-    assertEquals(14, hist.getSQLIndex());
+    hist.setSQLIndex(SQL_STATEMENT_INDEX);
+    assertEquals(SQL_STATEMENT_INDEX, hist.getSQLIndex());
   }
 
+  /**
+   * Test retrieving the cached results
+   */
   public void testGetResults() {
-    assertEquals(tableData[1][1], (String)hist.getResults().getValueAt(1, 1));
-    assertEquals(columnNames[0], hist.getResults().getColumnName(0));
+    assertEquals(TEST_TABLE_DATA[1][1], (String) hist.getResults().getValueAt(1, 1));
+    assertEquals(TEST_COLUMN_NAMES[0], hist.getResults().getColumnName(0));
   }
 
+  /**
+   * Set the results
+   */
   public void testSetResults() {
-    hist.setResults(new DefaultTableModel(tableData2, columnNames));
-    assertEquals(tableData2[1][1], (String)hist.getResults().getValueAt(1, 1));
+    hist.setResults(new DefaultTableModel(TEST_TABLE_DATA_2, TEST_COLUMN_NAMES));
+    assertEquals(TEST_TABLE_DATA_2[1][1], (String) hist.getResults().getValueAt(1, 1));
   }
 }

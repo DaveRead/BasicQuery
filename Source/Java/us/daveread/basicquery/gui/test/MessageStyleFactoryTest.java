@@ -4,32 +4,43 @@ import java.awt.Color;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.StyleConstants;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import us.daveread.basicquery.gui.MessageStyleFactory;
 
 /**
- * <p>Title: </p>
+ * <p>Title: Test the message style factory class</p>
  *
  * <p>Description: </p>
  *
- * <p>Copyright: Copyright (c) 2006</p>
+ * <p>Copyright: Copyright (c) 2006-2014</p>
  *
  * <p>Company: </p>
  *
  * @author David Read
- * @version $Id: MessageStyleFactoryTest.java,v 1.2 2006/05/04 03:41:09 daveread Exp $
  */
 public class MessageStyleFactoryTest extends TestCase {
-  MessageStyleFactory msg;
+  /**
+   * The factory instance
+   */
+  private MessageStyleFactory msg;
 
+  /**
+   * Setup the test case instance
+   */
   public MessageStyleFactoryTest() {
   }
 
+  /**
+   * Setup the test
+   */
   public void setUp() {
     msg = MessageStyleFactory.instance();
   }
 
+  /**
+   * Test creating a style
+   */
   public void testCreateStyle() {
     AttributeSet attr = msg.createStyle(Color.blue);
     assertEquals(Color.blue, StyleConstants.getForeground(attr));
@@ -92,8 +103,8 @@ public class MessageStyleFactoryTest extends TestCase {
     assertTrue(StyleConstants.isUnderline(attr));
 
     attr = msg.createStyle(Color.orange, Color.cyan,
-        MessageStyleFactory.BOLD | MessageStyleFactory.ITALIC |
-        MessageStyleFactory.UNDERLINE);
+        MessageStyleFactory.BOLD | MessageStyleFactory.ITALIC 
+          | MessageStyleFactory.UNDERLINE);
     assertEquals(Color.orange, StyleConstants.getForeground(attr));
     assertEquals(Color.cyan, StyleConstants.getBackground(attr));
     assertTrue(StyleConstants.isBold(attr));
@@ -107,8 +118,8 @@ public class MessageStyleFactoryTest extends TestCase {
     assertTrue(StyleConstants.isItalic(attr));
     assertFalse(StyleConstants.isUnderline(attr));
 
-    attr = msg.createStyle(MessageStyleFactory.BOLD |
-        MessageStyleFactory.ITALIC);
+    attr = msg.createStyle(MessageStyleFactory.BOLD 
+        | MessageStyleFactory.ITALIC);
     assertEquals(Color.black, StyleConstants.getForeground(attr));
     assertEquals(Color.white, StyleConstants.getBackground(attr));
     assertTrue(StyleConstants.isBold(attr));

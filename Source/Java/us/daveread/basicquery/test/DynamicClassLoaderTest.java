@@ -4,30 +4,38 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import us.daveread.basicquery.DynamicClassLoader;
 
 /**
- * <p>Title: </p>
+ * <p>Title: Test the dynamic class loader class</p>
  *
  * <p>Description: </p>
  *
- * <p>Copyright: Copyright (c) 2006</p>
+ * <p>Copyright: Copyright (c) 2006-2014</p>
  *
  * <p>Company: </p>
  *
  * @author David Read
- * @version $Id: DynamicClassLoaderTest.java,v 1.2 2006/05/04 03:38:48 daveread Exp $
  */
 public class DynamicClassLoaderTest extends TestCase {
+  /**
+   * The classloader instance to test
+   */
   private DynamicClassLoader loader;
 
+  /**
+   * Setup the test case instance
+   */
   public DynamicClassLoaderTest() {
   }
 
+  /**
+   * Setup the test
+   */
   public void setUp() {
-    List libs = new ArrayList();
+    final List<File> libs = new ArrayList<File>();
 
     // Should be a valid library
     libs.add(new File(System.getProperty("java.home") + "/lib/rt.jar"));
@@ -38,7 +46,10 @@ public class DynamicClassLoaderTest extends TestCase {
     loader = new DynamicClassLoader(libs);
   }
 
-  public void testLoadClass_1() {
+  /**
+   * Test loading an existing class without resolving it
+   */
+  public void testLoadClassNoResolve() {
     try {
       assertNotNull(loader.loadClass("java.lang.Package"));
     }
@@ -47,7 +58,10 @@ public class DynamicClassLoaderTest extends TestCase {
     }
   }
 
-  public void testLoadClass_2() {
+  /**
+   * Test loading an existing class and resolving it
+   */
+  public void testLoadClassWithResolve() {
     try {
       assertNotNull(loader.loadClass("java.lang.Package", true));
     }
@@ -56,7 +70,10 @@ public class DynamicClassLoaderTest extends TestCase {
     }
   }
 
-  public void testLoadClass_3() {
+  /**
+   * Test attempting to load a nonexistent class
+   */
+  public void testLoadNonexistantClass() {
     try {
       assertNotNull(loader.loadClass("java.lang.NoSuchPackage", true));
       assertTrue("Should not have found class", false);

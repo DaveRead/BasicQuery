@@ -1,38 +1,70 @@
 package us.daveread.basicquery.gui.test;
 
-import junit.framework.*;
+import junit.framework.TestCase;
+
+import org.apache.log4j.Logger;
 
 import us.daveread.basicquery.gui.FocusRequestor;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2006</p>
- *
- * <p>Company: </p>
- *
+ * <p>
+ * Title: Test focus requestor
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2006-2014
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
  * @author David Read
- * @version $Id: FocusRequestorTest.java,v 1.2 2006/05/04 03:41:09 daveread Exp $
  */
 public class FocusRequestorTest extends TestCase {
-  FocusRequestorTestComponent comp;
+  /**
+   * Logger
+   */
+  private static final Logger LOGGER = Logger
+      .getLogger(FocusRequestorTest.class);
 
+  /**
+   * Time in milliseconds to allow flasher to run when testing its operation
+   */
+  private static final int TEST_DELAY = 1000;
+
+  /**
+   * The backing component for the test
+   */
+  private FocusRequestorTestComponent comp;
+
+  /**
+   * Setup the test case instance
+   */
   public FocusRequestorTest() {
   }
 
+  /**
+   * Setup the component for the test
+   */
   public void setUp() {
     comp = new FocusRequestorTestComponent();
   }
 
+  /**
+   * Test the requestor
+   */
   public void testFocusRequestor() {
     new FocusRequestor(comp);
 
     try {
-      Thread.sleep(1000);
-    }
-    catch (InterruptedException intExc) {
+      Thread.sleep(TEST_DELAY);
+    } catch (InterruptedException intExc) {
+      LOGGER.error("Error while delaying during test run", intExc);
     }
 
     assertTrue(comp.isFocusRequested());

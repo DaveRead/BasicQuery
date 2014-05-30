@@ -1,14 +1,18 @@
 package us.daveread.basicquery.gui;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Window;
+
 
 /**
- * <p>Title: </p>
+ * <p>Title: GUI utilities</p>
  * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2004</p>
+ * <p>Copyright: Copyright (c) 2004-2014</p>
  * <p>Company: </p>
- * @author not attributable
- * @version 1.0
+ * 
+ * @author David Read
  */
 
 public class GUIUtility {
@@ -25,7 +29,7 @@ public class GUIUtility {
    * @param winaChild The window being centered.
    * @param winaParent The parent window, or null if no parent frame exists.
    */
-  public static void Center(Window winaChild, Window winaParent) {
+  public static void center(Window winaChild, Window winaParent) {
     Dimension dimlParentSize, dimlMySize;
     Point ptlUpperLeft;
     int ilX, ilY;
@@ -37,8 +41,8 @@ public class GUIUtility {
       dimlParentSize = winaParent.getSize();
       ptlUpperLeft = winaParent.getLocation();
 
-      if (dimlMySize.width > dimlParentSize.width ||
-          dimlMySize.height > dimlParentSize.height) {
+      if (dimlMySize.width > dimlParentSize.width 
+          || dimlMySize.height > dimlParentSize.height) {
         dimlParentSize = Toolkit.getDefaultToolkit().getScreenSize();
         ptlUpperLeft = new Point(0, 0);
       }

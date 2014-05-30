@@ -10,34 +10,57 @@ import javax.swing.JLabel;
 import javax.swing.BorderFactory;
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.AbstractTableModel;
 
 import org.apache.log4j.Logger;
 
 /**
- * Title:        Basic Query Utility
- * Description:  Execute arbitrary SQL against database accessible with any
+ * Title: Basic Query Utility
+ * Description: Execute arbitrary SQL against database accessible with any
  * JDBC-compliant driver.
- * Copyright:    Copyright (c) 2003
+ * 
+ * Copyright: Copyright (c) 2003-2014
+ * 
  * @author David Read
- * @version $Id: ColoredCellRenderer.java,v 1.5 2006/05/18 02:33:25 daveread Exp $
  */
 
-
 public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
-  public final static String ID =
-      "$Id: ColoredCellRenderer.java,v 1.5 2006/05/18 02:33:25 daveread Exp $";
 
-  private final static Logger logger = Logger.getLogger(ColoredCellRenderer.class);
+  /**
+   * Serial UID for this version of class
+   */
+  private static final long serialVersionUID = -2456625376274110406L;
 
-  private Map mapcFGPatterns;
-  private Map mapcBGPatterns;
+  /**
+   * Logger
+   */
+  @SuppressWarnings("unused")
+  private static final Logger LOGGER = Logger
+      .getLogger(ColoredCellRenderer.class);
 
-  private List objcAlternatingBGColors;
-  private List objcAlternatingFGColors;
+  /**
+   * Foreground colors mapped to keys
+   */
+  private Map<String, Color> mapcFGPatterns;
 
+  /**
+   * Background colors mapped to keys
+   */
+  private Map<String, Color> mapcBGPatterns;
+
+  /**
+   * The ordered set of foregound colors used for rows when displaying a table
+   */
+  private List<Color> objcAlternatingBGColors;
+
+  /**
+   * The ordered set of background colors used for rows when displaying a table
+   */
+  private List<Color> objcAlternatingFGColors;
+
+  /**
+   * A table to display
+   */
   private JTable objcTable;
-  private AbstractTableModel objcModel;
 
   /**
    * Constructor a ColoredCellRenderer - when this function is called it
@@ -51,8 +74,9 @@ public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
   /**
    * Class Constructor - passes the parameter iaHorizontalAlignment to the
    * function ColoredCellRenderer(int,int,int,int)
-   *
-   * @param iaHorizontalAlignment  The Horizontal Alignment attribute
+   * 
+   * @param iaHorizontalAlignment
+   *          The Horizontal Alignment attribute
    */
   public ColoredCellRenderer(int iaHorizontalAlignment) {
     this(iaHorizontalAlignment, JLabel.CENTER);
@@ -60,26 +84,39 @@ public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
 
   /**
    * Creates and Initializes the class ColoredCellRenderer
-   *
-   * @param iaHorizAlignment        The Horizontal Alignment attribute
-   * @param iaVerticalAlignment     The Vertical Alignment attribute
+   * 
+   * @param iaHorizAlignment
+   *          The Horizontal Alignment attribute
+   * @param iaVerticalAlignment
+   *          The Vertical Alignment attribute
    */
   public ColoredCellRenderer(int iaHorizAlignment, int iaVerticalAlignment) {
     setOpaque(true);
     setHorizontalAlignment(iaHorizAlignment);
     setVerticalAlignment(iaVerticalAlignment);
 
-    mapcFGPatterns = new HashMap();
-    mapcBGPatterns = new HashMap();
+    mapcFGPatterns = new HashMap<String, Color>();
+    mapcBGPatterns = new HashMap<String, Color>();
   }
 
+  /**
+   * Add a foreground and background color pair for a row in the displayed
+   * table. The added colors are kept in sequence than then used when displaying
+   * a table of data, cycling through the colors in order when displaying the
+   * rows.
+   * 
+   * @param objaTextColor
+   *          The foreground text color
+   * @param objaBGColor
+   *          The background cell color
+   */
   public void addAlternatingRowColor(Color objaTextColor, Color objaBGColor) {
     if (objcAlternatingBGColors == null) {
-      objcAlternatingBGColors = new ArrayList();
+      objcAlternatingBGColors = new ArrayList<Color>();
     }
 
     if (objcAlternatingFGColors == null) {
-      objcAlternatingFGColors = new ArrayList();
+      objcAlternatingFGColors = new ArrayList<Color>();
     }
 
     objcAlternatingBGColors.add(objaBGColor);
@@ -88,18 +125,23 @@ public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
 
   /**
    * Sets the default foreground (text) and background colors for the object
-   *
-   * @param objaTextColor  The default foreground (text) color is set to this value
-   * @param objaBackgroundColor  The default background color is set to this value
+   * 
+   * @param objaTextColor
+   *          The default foreground (text) color is set to this value
+   * @param objaBackgroundColor
+   *          The default background color is set to this value
    */
   public void setDefaultColors(Color objaTextColor, Color objaBackgroundColor) {
-    objcAlternatingBGColors = new ArrayList();
+    objcAlternatingBGColors = new ArrayList<Color>();
     objcAlternatingBGColors.add(objaBackgroundColor);
 
-    objcAlternatingFGColors = new ArrayList();
+    objcAlternatingFGColors = new ArrayList<Color>();
     objcAlternatingFGColors.add(objaTextColor);
   }
 
+  /**
+   * Reset the renderer, removing all color definitions
+   */
   public void clearColors() {
     objcAlternatingBGColors = null;
     objcAlternatingFGColors = null;
@@ -108,11 +150,15 @@ public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
   /**
    * Associates the specified foreground (text) and background colors with the
    * specified string pattern
-   *
-   * @param saPattern                  The key in this map is the string
-   * @param objaTextColor The value of the foreground (text) Color object associated with the string
-   * @param objaBackgroundColor        The value of the background Color object which
-   *                                   is associated with the string
+   * 
+   * @param saPattern
+   *          The key in this map is the string
+   * @param objaTextColor
+   *          The value of the foreground (text) Color object associated with
+   *          the string
+   * @param objaBackgroundColor
+   *          The value of the background Color object which
+   *          is associated with the string
    */
   public void addPattern(String saPattern, Color objaTextColor,
       Color objaBackgroundColor) {
@@ -121,42 +167,50 @@ public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
   }
 
   /**
-   * Finds the background color object that is associated with the String pattern
-   *
-   * @param saText        The string pattern which is the key for the
-   *                      color object
-   *
-   * @return Color        The background Color object
+   * Finds the background color object that is associated with the String
+   * pattern
+   * 
+   * @param saText
+   *          The string pattern which is the key for the
+   *          color object
+   * @param row
+   *          The row being displayed
+   * 
+   * @return Color The background Color object
    */
   private Color findBGColor(String saText, int row) {
     Color objlMatchedColor;
 
-    objlMatchedColor = (Color)mapcBGPatterns.get(saText);
+    objlMatchedColor = (Color) mapcBGPatterns.get(saText);
 
     if (objlMatchedColor == null && objcAlternatingBGColors != null) {
-      objlMatchedColor = (Color)objcAlternatingBGColors.get(row %
-          objcAlternatingBGColors.size());
+      objlMatchedColor = (Color) objcAlternatingBGColors.get(row 
+          % objcAlternatingBGColors.size());
     }
 
     return objlMatchedColor;
   }
 
   /**
-   * Finds the foreground color object that is associated with the String pattern
-   *
-   * @param saText        The string pattern which is the key for the
-   *                      color object
-   *
-   * @return Color        The foreground Color object
+   * Finds the foreground color object that is associated with the String
+   * pattern
+   * 
+   * @param saText
+   *          The string pattern which is the key for the
+   *          color object
+   * @param row
+   *          The row being displayed
+   * 
+   * @return Color The foreground Color object
    */
   private Color findFGColor(String saText, int row) {
     Color objlMatchedColor;
 
-    objlMatchedColor = (Color)mapcFGPatterns.get(saText);
+    objlMatchedColor = (Color) mapcFGPatterns.get(saText);
 
     if (objlMatchedColor == null && objcAlternatingFGColors != null) {
-      objlMatchedColor = (Color)objcAlternatingFGColors.get(row %
-          objcAlternatingFGColors.size());
+      objlMatchedColor = (Color) objcAlternatingFGColors.get(row 
+          % objcAlternatingFGColors.size());
     }
 
     return objlMatchedColor;
@@ -165,16 +219,22 @@ public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
   /**
    * Returns the component used for drawing the cell.Used to configure the
    * renderer appropriately before drawing
-   *
-   * @param table        The JTable that is asking the renderer to draw
-   * @param value        The value of the cell to be rendered
-   * @param isSelected   A Boolean Value - true if the cell is to be rendered
-   *                     with the selection highlighted
-   * @param hasFocus     A Boolean Value - if true render cell appropriately
-   * @param row          The row index of the cell to be rendered
-   * @param column       The column index of the cell to be rendered
-   *
-   * @return Component   Returns the component used for drawing the cell
+   * 
+   * @param table
+   *          The JTable that is asking the renderer to draw
+   * @param value
+   *          The value of the cell to be rendered
+   * @param isSelected
+   *          A Boolean Value - true if the cell is to be rendered
+   *          with the selection highlighted
+   * @param hasFocus
+   *          A Boolean Value - if true render cell appropriately
+   * @param row
+   *          The row index of the cell to be rendered
+   * @param column
+   *          The column index of the cell to be rendered
+   * 
+   * @return Component Returns the component used for drawing the cell
    */
   public Component getTableCellRendererComponent(JTable table, Object value,
       boolean isSelected,
@@ -183,7 +243,6 @@ public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
 
     if (objcTable == null) {
       objcTable = table;
-      objcModel = (AbstractTableModel)table.getModel();
     }
 
     if (value != null) {
@@ -199,12 +258,17 @@ public class ColoredCellRenderer extends JLabel implements TableCellRenderer {
 
   /**
    * Sets the color for the object objlBackgroundColor
-   *
-   * @param table           The JTable
-   * @param isSelected      Boolean value
-   * @param hasFocus        Whether the component has focus
-   * @param row             The row index
-   * @param col             The column index
+   * 
+   * @param table
+   *          The JTable
+   * @param isSelected
+   *          Boolean value
+   * @param hasFocus
+   *          Whether the component has focus
+   * @param row
+   *          The row index
+   * @param col
+   *          The column index
    */
   private void setColor(JTable table, boolean isSelected, boolean hasFocus,
       int row, int col) {

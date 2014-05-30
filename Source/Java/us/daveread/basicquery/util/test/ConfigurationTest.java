@@ -1,34 +1,66 @@
 package us.daveread.basicquery.util.test;
 
-import java.io.*;
-import junit.framework.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 
+import org.apache.log4j.Logger;
+
+import junit.framework.TestCase;
 import us.daveread.basicquery.util.Configuration;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2006</p>
- *
- * <p>Company: </p>
- *
+ * <p>
+ * Title: Test the Configuration class
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2006-2014
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
  * @author David Read
- * @version $Id: ConfigurationTest.java,v 1.1 2006/05/18 22:15:05 daveread Exp $
  */
 public class ConfigurationTest extends TestCase {
-  private static final String UNITTESTFILENAME = "BasicQuery.UnitTestCOnfigurationFile";
+  /**
+   * Logger
+   */
+  private static final Logger LOGGER = Logger
+      .getLogger(ConfigurationTest.class);
 
+  /**
+   * Configuration for the unit test to use
+   */
+  private static final String UNITTESTFILENAME = "BasicQuery.UnitTestConfigurationFile";
+
+  /**
+   * The configuration instance to test
+   */
   private Configuration config;
 
+  /**
+   * Setup the test case instance
+   */
   public ConfigurationTest() {
   }
 
+  /**
+   * Setup the test
+   */
   public void setUp() {
     config = Configuration.instance();
   }
 
+  /**
+   * Create a test configuration file
+   */
   private void createTestFile() {
     File defaultFile;
     PrintWriter out;
@@ -41,22 +73,25 @@ public class ConfigurationTest extends TestCase {
       out = new PrintWriter(new FileWriter(defaultFile, false));
       out.println("This file is created and used during unit testing.");
       out.println("You may delete it.");
-    }
-    catch (Throwable any) {
-
-    }
-    finally {
+    } catch (Throwable any) {
+      LOGGER.error("Error setting up the test configuration file: "
+          + defaultFile, any);
+    } finally {
       if (out != null) {
         try {
           out.close();
-        }
-        catch (Throwable any) {
+        } catch (Throwable any) {
+          LOGGER.warn("Error closing the test configuration file: "
+              + defaultFile, any);
 
         }
       }
     }
   }
 
+  /**
+   * Test storing the configuration to a file
+   */
   public void testStore() {
     File prop;
     long oldTimeStamp;
@@ -69,6 +104,9 @@ public class ConfigurationTest extends TestCase {
     assertTrue(prop.lastModified() > oldTimeStamp);
   }
 
+  /**
+   * Test loading the configuration file
+   */
   public void testGetFileSuccess() {
     File unitTestFile;
 
@@ -100,6 +138,9 @@ public class ConfigurationTest extends TestCase {
     }
   }
 
+  /**
+   * Test attmpting to load a non-existant configuration file
+   */
   public void testGetFileFailure() {
     assertFalse(config.getFile("NO.SUCH.FILE").exists());
   }

@@ -1,36 +1,74 @@
 package us.daveread.basicquery.gui.test;
 
 import javax.swing.JLabel;
+
+import org.apache.log4j.Logger;
+
 import java.util.Date;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import us.daveread.basicquery.gui.InsertTime;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2006</p>
- *
- * <p>Company: </p>
- *
+ * <p>
+ * Title: Test the insert time class
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2006-2014
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
  * @author David Read
- * @version $Id: InsertTimeTest.java,v 1.1 2006/05/01 20:18:54 daveread Exp $
  */
 public class InsertTimeTest extends TestCase {
-  private InsertTime timeDisp;
-  private JLabel jlabel;
+  /**
+   * Logger
+   */
+  private static final Logger LOGGER = Logger
+      .getLogger(InsertTimeTest.class);
 
+  /**
+   * Delay time between refreshes of the label
+   */
+  private static final int DELAY_TIME_BETWEEN_REFRESHES_MS = 500;
+
+  /**
+   * The insert time instance being tested
+   */
+  private InsertTime timeDisp;
+
+  /**
+   * The label being updated
+   */
+  private JLabel jLabel;
+
+  /**
+   * Setup the test case instance
+   */
   public InsertTimeTest() {
   }
 
+  /**
+   * Setup the test
+   */
   public void setUp() {
-    jlabel = new JLabel();
-    timeDisp = new InsertTime(jlabel, new Date().getTime(), 500);
+    jLabel = new JLabel();
+    timeDisp = new InsertTime(jLabel, new Date().getTime(),
+        DELAY_TIME_BETWEEN_REFRESHES_MS);
   }
 
+  /**
+   * Test the run method
+   */
   public void testRun() {
     Thread run;
 
@@ -39,20 +77,20 @@ public class InsertTimeTest extends TestCase {
 
     try {
       Thread.sleep(1000);
-    }
-    catch (InterruptedException intExc) {
+    } catch (InterruptedException intExc) {
+      LOGGER.error("Error while delaying during test run", intExc);
     }
 
-    assertTrue(jlabel.getText().trim().length() > 0);
+    assertTrue(jLabel.getText().trim().length() > 0);
 
     run.interrupt();
 
     try {
       Thread.sleep(1000);
-    }
-    catch (InterruptedException intExc) {
+    } catch (InterruptedException intExc) {
+      LOGGER.error("Error while delaying during test run", intExc);
     }
 
-    assertTrue(jlabel.getText().trim().length() == 0);
+    assertTrue(jLabel.getText().trim().length() == 0);
   }
 }

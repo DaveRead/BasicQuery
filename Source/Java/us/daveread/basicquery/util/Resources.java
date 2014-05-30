@@ -4,35 +4,91 @@ import java.util.ResourceBundle;
 import java.text.MessageFormat;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2004</p>
- *
- * <p>Company: </p>
- *
+ * <p>
+ * Title: Access resources for the application
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2004-2014
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
  * @author David Read
- * @version $Id: Resources.java,v 1.4 2006/05/04 03:36:52 daveread Exp $
  */
 public class Resources {
+  /**
+   * The package containing the resource bundles
+   */
+  private static final String RESOURCE_BUNDLE_PACKAGE = "us.daveread.basicquery.resourcebundles.BasicQueryResources";
+
+  /**
+   * No operation
+   */
   private Resources() {
   }
 
+  /**
+   * Get the string associated with the supplied key using the current resource
+   * bundle
+   * 
+   * @param key
+   *          The key representing the text to return
+   * 
+   * @return The text for the supplied key using the current resource bundle
+   */
   public static String getString(String key) {
-    return ResourceBundle.getBundle(
-        "us.daveread.basicquery.resourcebundles.BasicQueryResources").getString(
-        key);
+    return ResourceBundle.getBundle(RESOURCE_BUNDLE_PACKAGE).getString(key);
   }
 
+  /**
+   * Get the first character of the supplied key
+   * 
+   * @param key
+   *          The key
+   * 
+   * @return The first character of the key
+   */
   public static char getChar(String key) {
     return getString(key).charAt(0);
   }
 
+  /**
+   * Get the parameterized string associated with the supplied key using the
+   * current resource bundle and fill in the parameter values using the supplied
+   * array of parameters
+   * 
+   * @param key
+   *          The key representing the parameterized string to return
+   * @param args
+   *          The parameter values to use to populate the parameterized string
+   * 
+   * @return The text for the supplied key, updated with the supplied parameter
+   *         values, using the current resource bundle
+   */
   public static String getString(String key, Object[] args) {
     return MessageFormat.format(getString(key), args);
   }
 
+  /**
+   * Convenience method to deal with string having one parameter
+   * 
+   * @param key
+   *          The key representing the parameterized string to return
+   * @param arg
+   *          The single parameter value to use to populate the parameterized
+   *          string
+   * 
+   * @return
+   *         The text for the supplied key, updated with the supplied parameter
+   *         value, using the current resource bundle
+   */
   public static String getString(String key, String arg) {
     String[] args;
 
@@ -42,6 +98,22 @@ public class Resources {
     return getString(key, args);
   }
 
+  /**
+   * Convenience method to deal with string having two parameters
+   * 
+   * @param key
+   *          The key representing the parameterized string to return
+   * @param arg1
+   *          The first parameter value to use to populate the parameterized
+   *          string
+   * @param arg2
+   *          The second parameter value to use to populate the parameterized
+   *          string
+   * 
+   * @return
+   *         The text for the supplied key, updated with the supplied parameter
+   *         values, using the current resource bundle
+   */
   public static String getString(String key, String arg1, String arg2) {
     String[] args;
 
@@ -52,6 +124,25 @@ public class Resources {
     return getString(key, args);
   }
 
+  /**
+   * Convenience method to deal with string having three parameters
+   * 
+   * @param key
+   *          The key representing the parameterized string to return
+   * @param arg1
+   *          The first parameter value to use to populate the parameterized
+   *          string
+   * @param arg2
+   *          The second parameter value to use to populate the parameterized
+   *          string
+   * @param arg3
+   *          The third parameter value to use to populate the parameterized
+   *          string
+   * 
+   * @return
+   *         The text for the supplied key, updated with the supplied parameter
+   *         values, using the current resource bundle
+   */
   public static String getString(String key, String arg1, String arg2,
       String arg3) {
     String[] args;
@@ -64,6 +155,28 @@ public class Resources {
     return getString(key, args);
   }
 
+  /**
+   * Convenience method to deal with string having four parameters
+   * 
+   * @param key
+   *          The key representing the parameterized string to return
+   * @param arg1
+   *          The first parameter value to use to populate the parameterized
+   *          string
+   * @param arg2
+   *          The second parameter value to use to populate the parameterized
+   *          string
+   * @param arg3
+   *          The third parameter value to use to populate the parameterized
+   *          string
+   * @param arg4
+   *          The fourth parameter value to use to populate the parameterized
+   *          string
+   * 
+   * @return
+   *         The text for the supplied key, updated with the supplied parameter
+   *         values, using the current resource bundle
+   */
   public static String getString(String key, String arg1, String arg2,
       String arg3, String arg4) {
     String[] args;
@@ -77,6 +190,31 @@ public class Resources {
     return getString(key, args);
   }
 
+  /**
+   * Convenience method to deal with string having five parameters
+   * 
+   * @param key
+   *          The key representing the parameterized string to return
+   * @param arg1
+   *          The first parameter value to use to populate the parameterized
+   *          string
+   * @param arg2
+   *          The second parameter value to use to populate the parameterized
+   *          string
+   * @param arg3
+   *          The third parameter value to use to populate the parameterized
+   *          string
+   * @param arg4
+   *          The fourth parameter value to use to populate the parameterized
+   *          string
+   * @param arg5
+   *          The fifth parameter value to use to populate the parameterized
+   *          string
+   * 
+   * @return
+   *         The text for the supplied key, updated with the supplied parameter
+   *         values, using the current resource bundle
+   */
   public static String getString(String key, String arg1, String arg2,
       String arg3, String arg4, String arg5) {
     String[] args;
@@ -91,6 +229,34 @@ public class Resources {
     return getString(key, args);
   }
 
+  /**
+   * Convenience method to deal with string having six parameters
+   * 
+   * @param key
+   *          The key representing the parameterized string to return
+   * @param arg1
+   *          The first parameter value to use to populate the parameterized
+   *          string
+   * @param arg2
+   *          The second parameter value to use to populate the parameterized
+   *          string
+   * @param arg3
+   *          The third parameter value to use to populate the parameterized
+   *          string
+   * @param arg4
+   *          The fourth parameter value to use to populate the parameterized
+   *          string
+   * @param arg5
+   *          The fifth parameter value to use to populate the parameterized
+   *          string
+   * @param arg6
+   *          The sixth parameter value to use to populate the parameterized
+   *          string
+   * 
+   * @return
+   *         The text for the supplied key, updated with the supplied parameter
+   *         values, using the current resource bundle
+   */
   public static String getString(String key, String arg1, String arg2,
       String arg3, String arg4, String arg5, String arg6) {
     String[] args;
@@ -106,6 +272,37 @@ public class Resources {
     return getString(key, args);
   }
 
+  /**
+   * Convenience method to deal with string having seven parameters
+   * 
+   * @param key
+   *          The key representing the parameterized string to return
+   * @param arg1
+   *          The first parameter value to use to populate the parameterized
+   *          string
+   * @param arg2
+   *          The second parameter value to use to populate the parameterized
+   *          string
+   * @param arg3
+   *          The third parameter value to use to populate the parameterized
+   *          string
+   * @param arg4
+   *          The fourth parameter value to use to populate the parameterized
+   *          string
+   * @param arg5
+   *          The fifth parameter value to use to populate the parameterized
+   *          string
+   * @param arg6
+   *          The sixth parameter value to use to populate the parameterized
+   *          string
+   * @param arg7
+   *          The seventh parameter value to use to populate the parameterized
+   *          string
+   * 
+   * @return
+   *         The text for the supplied key, updated with the supplied parameter
+   *         values, using the current resource bundle
+   */
   public static String getString(String key, String arg1, String arg2,
       String arg3, String arg4, String arg5, String arg6, String arg7) {
     String[] args;

@@ -1,6 +1,9 @@
 package us.daveread.basicquery;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverPropertyInfo;
+import java.sql.SQLException;
 import java.util.Properties;
 
 /**
@@ -8,7 +11,7 @@ import java.util.Properties;
  * <p>Description: Support for loading a DB driver at runtime.  Implements the
  *        java.sql.Driver interface.  See the interface documentation for
  *        descriptions of the methods.</p>
- * <p>Copyright: Copyright (c) 2004, David Read</p>
+ * <p>Copyright: Copyright (c) 2004-2014, David Read</p>
  * <p>This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -22,10 +25,12 @@ import java.util.Properties;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</p>
  * <p></p>
  * @author David Read
- * @version $Id: DynamicDriver.java,v 1.2 2006/04/20 03:07:28 daveread Exp $
  */
 
 public class DynamicDriver implements Driver {
+  /**
+   * The driver for accessing the database
+   */
   private Driver driver;
 
   /**
@@ -36,27 +41,33 @@ public class DynamicDriver implements Driver {
     driver = d;
   }
 
+  @Override
   public boolean acceptsURL(String url) throws SQLException {
     return driver.acceptsURL(url);
   }
 
+  @Override
   public Connection connect(String url, Properties prop) throws SQLException {
     return driver.connect(url, prop);
   }
 
+  @Override
   public DriverPropertyInfo[] getPropertyInfo(String url, Properties prop) throws
       SQLException {
     return driver.getPropertyInfo(url, prop);
   }
 
+  @Override
   public int getMajorVersion() {
     return driver.getMajorVersion();
   }
 
+  @Override
   public int getMinorVersion() {
     return driver.getMinorVersion();
   }
 
+  @Override
   public boolean jdbcCompliant() {
     return driver.jdbcCompliant();
   }

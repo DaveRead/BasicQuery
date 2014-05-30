@@ -9,7 +9,7 @@ import javax.swing.event.ListDataEvent;
 /**
  * <p>Title: ReorderListModel</p>
  * <p>Description: ListModel with ability to reorder the list</p>
- * <p>Copyright: Copyright (c) 2004, David Read</p>
+ * <p>Copyright: Copyright (c) 2004-2014, David Read</p>
  * <p>This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,20 +23,28 @@ import javax.swing.event.ListDataEvent;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</p>
  * <p></p>
  * @author David Read
- * @version $Id: ReorderListModel.java,v 1.2 2006/04/20 03:10:30 daveread Exp $
+ * 
+ * @param <T> Type of data being reordered
  */
 
-public class ReorderListModel implements ListModel {
-  private List data;
-  private List listeners;
+public class ReorderListModel<T> implements ListModel {
+  /**
+   * List of objects that can be reordered
+   */
+  private List<T> data;
+  
+  /**
+   * Listeners to notify if the list is reordered
+   */
+  private List<ListDataListener> listeners;
 
   /**
    * Constructor takes a List prepopulated with information to be presented in the GUI list.
    *
    * @param theData List of objects to be represented in the GUI list.
    */
-  public ReorderListModel(List theData) {
-    listeners = new ArrayList();
+  public ReorderListModel(List<T> theData) {
+    listeners = new ArrayList<ListDataListener>();
     data = theData;
   }
 
@@ -53,7 +61,7 @@ public class ReorderListModel implements ListModel {
    * @param index int The index in the list containing the object to be returned.
    * @return Object
    */
-  public Object getElementAt(int index) {
+  public T getElementAt(int index) {
     return data.get(index);
   }
 
@@ -104,7 +112,7 @@ public class ReorderListModel implements ListModel {
    * Get the list which backs this model.
    * @return List The list backing the model.
    */
-  public List getList() {
+  public List<T> getList() {
     return data;
   }
 
@@ -117,7 +125,7 @@ public class ReorderListModel implements ListModel {
     event = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, 0);
 
     for (int loop = 0; loop < listeners.size(); ++loop) {
-      ((ListDataListener)listeners.get(loop)).contentsChanged(event);
+      listeners.get(loop).contentsChanged(event);
     }
   }
 }

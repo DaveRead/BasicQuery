@@ -1,11 +1,13 @@
 package us.daveread.basicquery;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * <p>Title: SQL Types</p>
  * <p>Description: Associates string representation of SQL data types to the java.sql.Types value</p>
- * <p>Copyright: Copyright (c) 2004, David Read</p>
+ * <p>Copyright: Copyright (c) 2004-2014, David Read</p>
  * <p>This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,20 +21,32 @@ import java.util.*;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</p>
  * <p></p>
  * @author David Read
- * @version $Id: SQLTypes.java,v 1.2 2006/04/20 03:10:54 daveread Exp $
+ * 
+ * TODO Convert to Enumeration
  */
 
 public class SQLTypes {
+  /**
+   * The type name
+   */
   private String typeName;
+  
+  /**
+   * The type id
+   */
   private int typeId;
+  
+  /**
+   * The set of known types
+   */
   private static SQLTypes[] knownTypes;
 
   /**
    * The collection of known SQL data types
    */
   static {
-    java.util.List allTypes;
-    allTypes = new ArrayList();
+    List<SQLTypes> allTypes;
+    allTypes = new ArrayList<SQLTypes>();
     allTypes.add(new SQLTypes("BOOLEAN", java.sql.Types.BOOLEAN));
     allTypes.add(new SQLTypes("CHAR", java.sql.Types.CHAR));
     allTypes.add(new SQLTypes("DATE", java.sql.Types.DATE));
@@ -44,7 +58,7 @@ public class SQLTypes {
     allTypes.add(new SQLTypes("STRING", java.sql.Types.VARCHAR));
 
     knownTypes = new SQLTypes[allTypes.size()];
-    knownTypes = (SQLTypes[])allTypes.toArray(new SQLTypes[0]);
+    knownTypes = allTypes.toArray(new SQLTypes[0]);
   };
 
   /**
@@ -62,13 +76,15 @@ public class SQLTypes {
    * Get the java.sql.Types value for the supplied type string representation
    *
    * @param pTypeName The string representation of the type
+   * 
    * @return The java.sql.Types value associated with the supplied string representation
    */
   public static int getSQLTypeId(String pTypeName) {
+    String typeName;
     int returnTypeId;
     int loop;
 
-    pTypeName = pTypeName.toUpperCase();
+    typeName = pTypeName.toUpperCase();
 
     // Default type if we don't match a defined string
     returnTypeId = java.sql.Types.OTHER;
@@ -76,7 +92,7 @@ public class SQLTypes {
     for (loop = 0;
         loop < knownTypes.length && returnTypeId == java.sql.Types.OTHER;
         ++loop) {
-      if (pTypeName.startsWith(knownTypes[loop].typeName)) {
+      if (typeName.startsWith(knownTypes[loop].typeName)) {
         returnTypeId = knownTypes[loop].typeId;
       }
     }
@@ -90,7 +106,7 @@ public class SQLTypes {
    * @return The String array of known SQL data types
    */
   public static String[] getKnownTypeNames() {
-    String knownTypeNames[];
+    String[] knownTypeNames;
 
     knownTypeNames = new String[knownTypes.length];
 

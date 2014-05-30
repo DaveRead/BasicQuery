@@ -1,0 +1,1 @@
+java -Xms64M -Xmx256M -Xloggc:c:\BasicQueryGC.log -cp dist\BasicQuery.jar;ThirdPartyLibs\commons-collections-3.1.jar;ThirdPartyLibs\commons-pool-1.3.jar;ThirdPartyLibs\commons-dbcp-1.2.1.jar;ThirdPartyLibs\log4j-1.2.9.jar us.daveread.basicquery.BasicQuery

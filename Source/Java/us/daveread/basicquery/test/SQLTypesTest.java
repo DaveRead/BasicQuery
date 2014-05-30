@@ -3,26 +3,31 @@ package us.daveread.basicquery.test;
 import java.util.List;
 import java.util.Arrays;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 import us.daveread.basicquery.SQLTypes;
 
 /**
- * <p>Title: </p>
+ * <p>Title: Test the SQL types class</p>
  *
  * <p>Description: </p>
  *
- * <p>Copyright: Copyright (c) 2006</p>
+ * <p>Copyright: Copyright (c) 2006-2014</p>
  *
  * <p>Company: </p>
  *
  * @author David Read
- * @version $Id: SQLTypesTest.java,v 1.1 2006/05/01 20:19:31 daveread Exp $
  */
 public class SQLTypesTest extends TestCase {
+  /**
+   * Setup the test case instance
+   */
   public SQLTypesTest() {
   }
 
+  /**
+   * Test getting the SQL type ids
+   */
   public void testGetSQLTypeId() {
     assertEquals(java.sql.Types.BOOLEAN, SQLTypes.getSQLTypeId("Boolean"));
     assertEquals(java.sql.Types.CHAR, SQLTypes.getSQLTypeId("Char"));
@@ -40,9 +45,12 @@ public class SQLTypesTest extends TestCase {
 
   }
 
+  /**
+   * Test getting the SQL types names
+   */
   public void testGetKnownTypeNames() {
-    String[] types = SQLTypes.getKnownTypeNames();
-    List typesList = Arrays.asList(types);
+    final String[] types = SQLTypes.getKnownTypeNames();
+    final List<String> typesList = Arrays.asList(types);
 
     assertTrue(typesList.contains("BOOLEAN"));
     assertTrue(typesList.contains("CHAR"));

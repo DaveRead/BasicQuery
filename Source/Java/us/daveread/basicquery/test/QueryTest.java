@@ -1,40 +1,69 @@
 package us.daveread.basicquery.test;
 
-import junit.framework.*;
-
+import junit.framework.TestCase;
 import us.daveread.basicquery.Query;
 
 /**
- * <p>Title: </p>
+ * <p>Title: Test the query class</p>
  *
  * <p>Description: </p>
  *
- * <p>Copyright: Copyright (c) 2006</p>
+ * <p>Copyright: Copyright (c) 2006-2014</p>
  *
  * <p>Company: </p>
  *
  * @author David Read
- * @version $Id: QueryTest.java,v 1.1 2006/05/01 20:19:31 daveread Exp $
  */
 public class QueryTest extends TestCase {
+  /**
+   * Test select statement
+   */
+  private static final String SELECT_STATEMENT = "select this from that where what";
+  
+  /**
+   * Test update statement
+   */
+  private static final String UPDATE_STATEMENT = "insert this into that";
+
+  /**
+   * A query in default mode
+   */
   private Query queryDefMode;
+  
+  /**
+   * A query in select mode
+   */
   private Query querySelMode;
+  
+  /**
+   * A query in update mode
+   */
   private Query queryUpdMode;
+  
+  /**
+   * A query in describe mode
+   */
   private Query queryDesMode;
 
-  private static final String select = "select this from that where what";
-  private static final String update = "insert this into that";
-
+  /**
+   * Setup the test case instance
+   */
   public QueryTest() {
   }
 
+  /**
+   * Setup the test
+   */
   public void setUp() {
-    queryDefMode = new Query(select);
-    querySelMode = new Query(select + "2", Query.MODE_QUERY);
-    queryUpdMode = new Query(update, Query.MODE_UPDATE);
-    queryDesMode = new Query(select + "3", Query.MODE_DESCRIBE);
+    queryDefMode = new Query(SELECT_STATEMENT);
+    querySelMode = new Query(SELECT_STATEMENT + "2", Query.MODE_QUERY);
+    queryUpdMode = new Query(UPDATE_STATEMENT, Query.MODE_UPDATE);
+    queryDesMode = new Query(SELECT_STATEMENT + "3", Query.MODE_DESCRIBE);
   }
 
+  /**
+   * Test getting the query mode
+   */
   public void testGetMode() {
     assertEquals(Query.MODE_QUERY, queryDefMode.getMode());
     assertEquals(Query.MODE_QUERY, querySelMode.getMode());
@@ -42,13 +71,19 @@ public class QueryTest extends TestCase {
     assertEquals(Query.MODE_UPDATE, queryUpdMode.getMode());
   }
 
+  /**
+   * Test getting the SQL statement
+   */
   public void testGetSQL() {
-    assertEquals(select, queryDefMode.getSQL());
-    assertEquals(select + "2", querySelMode.getSQL());
-    assertEquals(update, queryUpdMode.getSQL());
-    assertEquals(select + "3", queryDesMode.getSQL());
+    assertEquals(SELECT_STATEMENT, queryDefMode.getSql());
+    assertEquals(SELECT_STATEMENT + "2", querySelMode.getSql());
+    assertEquals(UPDATE_STATEMENT, queryUpdMode.getSql());
+    assertEquals(SELECT_STATEMENT + "3", queryDesMode.getSql());
   }
 
+  /**
+   * Test setting the query mode
+   */
   public void testSetMode() {
     queryDefMode.setMode(Query.MODE_DESCRIBE);
     querySelMode.setMode(Query.MODE_UPDATE);
@@ -61,10 +96,13 @@ public class QueryTest extends TestCase {
     assertEquals(Query.MODE_QUERY, queryDesMode.getMode());
   }
 
+  /**
+   * Test obtaining the string value of the query
+   */
   public void testToString() {
-    assertEquals(select, queryDefMode.toString());
-    assertEquals(select + "2", querySelMode.toString());
-    assertEquals(update, queryUpdMode.toString());
-    assertEquals(select + "3", queryDesMode.toString());
+    assertEquals(SELECT_STATEMENT, queryDefMode.toString());
+    assertEquals(SELECT_STATEMENT + "2", querySelMode.toString());
+    assertEquals(UPDATE_STATEMENT, queryUpdMode.toString());
+    assertEquals(SELECT_STATEMENT + "3", queryDesMode.toString());
   }
 }

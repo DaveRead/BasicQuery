@@ -1,12 +1,23 @@
 package us.daveread.basicquery;
 
-import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
 import java.util.List;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
-import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.WindowConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import org.apache.log4j.Logger;
 
@@ -14,44 +25,107 @@ import us.daveread.basicquery.gui.GUIUtility;
 import us.daveread.basicquery.util.Resources;
 
 /**
- * <p>Title: ReorderDialog</p>
- * <p>Description: Display list of objects and allow them to be reordered.</p>
- * <p>Copyright: Copyright (c) 2004, David Read</p>
- * <p>This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.</p>
- *  <p>This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.</p>
- *  <p>You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA</p>
- * <p></p>
+ * <p>
+ * Title: ReorderDialog
+ * </p>
+ * <p>
+ * Description: Display list of objects and allow them to be reordered.
+ * </p>
+ * <p>
+ * Copyright: Copyright (c) 2004-2014, David Read
+ * </p>
+ * <p>
+ * This program is free software; you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation; either version 2 of the License, or (at your option) any later
+ * version.
+ * </p>
+ * <p>
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
+ * details.
+ * </p>
+ * <p>
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA 02111-1307 USA
+ * </p>
+ * <p>
+ * </p>
+ * 
  * @author David Read
- * @version $Id: ReorderDialog.java,v 1.3 2006/05/04 03:43:20 daveread Exp $
  */
 
 public class ReorderDialog extends JDialog implements ActionListener,
     WindowListener,
     ListSelectionListener {
-  private static final Logger logger = Logger.getLogger(ReorderDialog.class);
-
-  private List ordered;
-  private boolean didReorder;
-  private JButton up, down, close, cancel;
-  private JList reordered;
-  private ReorderListModel reorderedModel;
+  /**
+   * Serial UID for the class
+   */
+  private static final long serialVersionUID = 1013157031020796234L;
 
   /**
-   * Constructs the JDialog as a modal dialog and sets-up the components.  Finally
-   * it makes itself visible.
-   * @param parent JFrame The parent JFrame that owns this dialog.
-   * @param objects List The list of data to be presented in the list.
-   * @throws HeadlessException
+   * Logger
    */
-  public ReorderDialog(JFrame parent, List objects) throws HeadlessException {
+  private static final Logger LOGGER = Logger.getLogger(ReorderDialog.class);
+
+  /**
+   * Maximum row height of the list display
+   */
+  private static final int MAXIMUM_ROWS_TO_DISPLAY = 20;
+
+  /**
+   * List of objects the user can reorder
+   */
+  private List<Object> ordered;
+
+  /**
+   * Detect if the order of the object was changed by the user
+   */
+  private boolean didReorder;
+
+  /**
+   * Move the selected item up
+   */
+  private JButton up;
+
+  /**
+   * Move the selected item down
+   */
+  private JButton down;
+
+  /**
+   * Close the dialog (accepting any changes made)
+   */
+  private JButton close;
+
+  /**
+   * Cancel the dialog (ignoring any changes made)
+   */
+  private JButton cancel;
+
+  /**
+   * The reordered list of objects
+   */
+  private JList reordered;
+
+  /**
+   * The model backing the reorderable list display
+   */
+  private ReorderListModel<Object> reorderedModel;
+
+  /**
+   * Constructs the JDialog as a modal dialog and sets-up the components.
+   * Finally
+   * it makes itself visible.
+   * 
+   * @param parent
+   *          JFrame The parent JFrame that owns this dialog.
+   * @param objects
+   *          List The list of data to be presented in the list.
+   */
+  public ReorderDialog(JFrame parent, List<Object> objects) {
     super(parent, true);
     ordered = objects;
 
@@ -65,7 +139,7 @@ public class ReorderDialog extends JDialog implements ActionListener,
       setSize(parent.getWidth(), getHeight());
     }
 
-    GUIUtility.Center(this, parent);
+    GUIUtility.center(this, parent);
 
     setVisible(true);
   }
@@ -79,10 +153,12 @@ public class ReorderDialog extends JDialog implements ActionListener,
 
     // Center is list of objects;
     getContentPane().add(new JScrollPane(reordered = new JList(reorderedModel =
-        new ReorderListModel(ordered))), BorderLayout.CENTER);
+        new ReorderListModel<Object>(ordered))), BorderLayout.CENTER);
     reordered.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     reordered.addListSelectionListener(this);
-    reordered.setVisibleRowCount(ordered.size() < 20 ? ordered.size() : 20);
+    reordered
+        .setVisibleRowCount(ordered.size() < MAXIMUM_ROWS_TO_DISPLAY ? ordered
+            .size() : MAXIMUM_ROWS_TO_DISPLAY);
 
     // Buttons
     buttons = new JPanel();
@@ -90,18 +166,20 @@ public class ReorderDialog extends JDialog implements ActionListener,
     buttons.add(up = new JButton(Resources.getString("ctlReorderSQLMoveUp")));
     up.addActionListener(this);
     up.setEnabled(false);
-    buttons.add(down = new JButton(Resources.getString("ctlReorderSQLMoveDown")));
+    buttons
+        .add(down = new JButton(Resources.getString("ctlReorderSQLMoveDown")));
     down.addActionListener(this);
     down.setEnabled(false);
     buttons.add(close = new JButton(Resources.getString("ctlReorderSQLOkay")));
     close.addActionListener(this);
-    buttons.add(cancel = new JButton(Resources.getString("ctlReorderSQLCancel")));
+    buttons
+        .add(cancel = new JButton(Resources.getString("ctlReorderSQLCancel")));
     cancel.addActionListener(this);
     getContentPane().add(buttons, BorderLayout.SOUTH);
   }
 
   /**
-   * User cancelled changes.  This method clears the reorder boolean and
+   * User canceled changes. This method clears the reorder boolean and
    * disposes of the dialog.
    */
   private void cancelDialog() {
@@ -110,8 +188,9 @@ public class ReorderDialog extends JDialog implements ActionListener,
   }
 
   /**
-   * User requested that the dialog be closed.  The current list, which may
-   * or may not be reordered from its original state, is obtrained from the model
+   * User requested that the dialog be closed. The current list, which may
+   * or may not be reordered from its original state, is obtrained from the
+   * model
    * and the dialog is closed.
    */
   private void closeDialog() {
@@ -131,8 +210,10 @@ public class ReorderDialog extends JDialog implements ActionListener,
   }
 
   /**
-   * Move the selected entry down one position (move to higher index value) which
-   * in the GUI will result in the selected line moving down one line vertically.
+   * Move the selected entry down one position (move to higher index value)
+   * which
+   * in the GUI will result in the selected line moving down one line
+   * vertically.
    */
   private void moveDown() {
     reorderedModel.moveDown(reordered.getSelectedIndex());
@@ -143,14 +224,16 @@ public class ReorderDialog extends JDialog implements ActionListener,
 
   /**
    * Get the list that backs the model.
+   * 
    * @return List The list which may have been reordered.
    */
-  public List getAsOrdered() {
+  public List<Object> getAsOrdered() {
     return ordered;
   }
 
   /**
    * Return whether or not the list was reordered from its original state.
+   * 
    * @return boolean Whether the list was reordered.
    */
   public boolean isReordered() {
@@ -162,8 +245,9 @@ public class ReorderDialog extends JDialog implements ActionListener,
   /**
    * Depending on which option the user has invoked the
    * appropriate action is performed
-   *
-   * @param evt Specifies the action event that has taken place
+   * 
+   * @param evt
+   *          Specifies the action event that has taken place
    */
   public void actionPerformed(ActionEvent evt) {
     if (evt.getSource() == cancel) {
@@ -181,11 +265,12 @@ public class ReorderDialog extends JDialog implements ActionListener,
 
   // Begin ListSelectionListener Interface
 
+  @Override
   public void valueChanged(ListSelectionEvent evt) {
     if (reordered.getSelectedIndex() != -1) {
       up.setEnabled(reordered.getSelectedIndex() != 0);
-      down.setEnabled(reordered.getSelectedIndex() <
-          reordered.getModel().getSize() - 1);
+      down.setEnabled(reordered.getSelectedIndex() 
+          < reordered.getModel().getSize() - 1);
     }
   }
 
@@ -193,71 +278,38 @@ public class ReorderDialog extends JDialog implements ActionListener,
 
   // Begin WindowListener Interface
 
-  /**
-   * Invoked when the Window is set to be the active Window.
-   *
-   * @param evt  The event that specifies that the window is activated
-   */
+  @Override
   public void windowActivated(WindowEvent evt) {
   }
 
-  /**
-   * Invoked when a window has been closed as the result of calling
-   * dispose on the window.
-   *
-   * @param evt  The Window event
-   */
+  @Override
   public void windowClosed(WindowEvent evt) {
   }
 
-  /**
-   * Invoked when the user attempts to close the window from the
-   * window's system menu.Exits the application once the window
-   * is closed
-   *
-   * @param evt The event that specifies the closing of the window
-   */
+  @Override
   public void windowClosing(WindowEvent evt) {
     try {
       dispose();
-    }
-    catch (Throwable any) {
+    } catch (Throwable any) {
       // This fails periodically with a NP exception
       // from Container.removeNotify
-      logger.error("Failure during dialog clean-up", any);
+      LOGGER.error("Failure during dialog clean-up", any);
     }
   }
 
-  /**
-   * Invoked when a Window is no longer the active Window
-   *
-   * @param evt  The event that specifies that the window is deactivated
-   */
+  @Override
   public void windowDeactivated(WindowEvent evt) {
   }
 
-  /**
-   * Invoked when a window is changed from a minimized to a normal state.
-   *
-   * @param evt  The event that specifies that the window is deiconified
-   */
+  @Override
   public void windowDeiconified(WindowEvent evt) {
   }
 
-  /**
-   * Invoked when a window is changed from a normal to a minimized state
-   *
-   * @param evt  The event that specifies that the window is iconified
-   */
+  @Override
   public void windowIconified(WindowEvent evt) {
   }
 
-  /**
-   * Creates a new thread that attaches focus to the window that has been
-   * opened and also places the cursor on the textfield for the userid
-   *
-   * @param evt The event that specifies the opening of the window
-   */
+  @Override
   public void windowOpened(WindowEvent evt) {
   }
 

@@ -1,49 +1,122 @@
 package us.daveread.basicquery.gui;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-/**
- * <p>Title: FontChooser</p>
- *
- * <p>Description:
- * A font chooser that allows users to pick a font by name, size, style, and
- * color.  The color selection is provided by a JColorChooser pane.  This
- * dialog builds an AttributeSet suitable for use with JTextPane.
- * </p>
- *
- * <p>Copyright: Copyright (c) 2006</p>
- *
- * <p>Company: </p>
- *
- * @author David Read
- * @version $Id: FontChooser.java,v 1.2 2006/05/18 22:16:57 daveread Exp $
- */
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
-import javax.swing.*;
-import javax.swing.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import org.apache.log4j.Logger;
+
 import us.daveread.basicquery.util.Resources;
 
+/**
+ * <p>
+ * Title: FontChooser
+ * </p>
+ * 
+ * <p>
+ * Description: A font chooser that allows users to pick a font by name, size,
+ * style, and color. The color selection is provided by a JColorChooser pane.
+ * This dialog builds an AttributeSet suitable for use with JTextPane.
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2006
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
+ * @author David Read
+ */
 public class FontChooser extends JDialog implements ActionListener, KeyListener {
+  /**
+   * Serial UID
+   */
+  private static final long serialVersionUID = -6831041847770546773L;
 
-//  private JColorChooser colorChooser;
+  /**
+   * Logger
+   */
+  private static final Logger LOGGER = Logger.getLogger(FontChooser.class);
+
+  // private JColorChooser colorChooser;
+  /**
+   * The font name choice
+   */
   private JComboBox fontName;
-  private JCheckBox fontBold, fontItalic;
-  private JTextField fontSize;
-  private JLabel previewLabel;
-  private SimpleAttributeSet attributes;
-  private Font newFont;
-//  private Color newColor;
 
+  /**
+   * The font bold selection
+   */
+  private JCheckBox fontBold;
+
+  /**
+   * The font italic selection
+   */
+  private JCheckBox fontItalic;
+
+  /**
+   * The font size setting
+   */
+  private JTextField fontSize;
+
+  /**
+   * The preview area
+   */
+  private JLabel previewLabel;
+
+  /**
+   * The font attributes
+   */
+  private SimpleAttributeSet attributes;
+
+  /**
+   * The chosen font
+   */
+  private Font newFont;
+
+  // private Color newColor;
+
+  /**
+   * Setup a font chooser dialog with the default font information
+   * 
+   * @param parent
+   *          The parent frame for this dialog
+   */
   public FontChooser(Frame parent) {
     super(parent, Resources.getString("dlgFontChooserTitle"), true);
     Font currentFont;
 
     currentFont = parent.getFont();
 
-//    setSize(450, 450);
+    // setSize(450, 450);
     attributes = new SimpleAttributeSet();
     StyleConstants.setBold(attributes, currentFont.isBold());
     StyleConstants.setItalic(attributes, currentFont.isItalic());
@@ -58,23 +131,27 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
     });
 
     // Start the long process of setting up our interface
-    Container c = getContentPane();
+    final Container container = getContentPane();
 
     String[] fontFamilies;
     fontFamilies = getFontFamilies();
-    JPanel fontPanel = new JPanel();
-    //    fontName = new JComboBox(new String[] {"TimesRoman",
-//                                           "Helvetica", "Courier"});
+    final JPanel fontPanel = new JPanel();
+
+    // fontName = new JComboBox(new String[] {"TimesRoman",
+    // "Helvetica", "Courier"});
     fontName = new JComboBox(fontFamilies);
     fontName.setSelectedItem(currentFont.getFamily());
     fontName.addActionListener(this);
+
     fontSize = new JTextField(currentFont.getSize() + "", 4);
     fontSize.setHorizontalAlignment(SwingConstants.RIGHT);
-//    fontSize.addActionListener(this);
+    // fontSize.addActionListener(this);
     fontSize.addKeyListener(this);
+
     fontBold = new JCheckBox(Resources.getString("dlgFontChooserBold"));
     fontBold.setSelected(StyleConstants.isBold(attributes));
     fontBold.addActionListener(this);
+
     fontItalic = new JCheckBox(Resources.getString("dlgFontChooserItalic"));
     fontItalic.setSelected(StyleConstants.isItalic(attributes));
     fontItalic.addActionListener(this);
@@ -85,32 +162,33 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
     fontPanel.add(fontBold);
     fontPanel.add(fontItalic);
 
-    c.add(fontPanel, BorderLayout.NORTH);
+    container.add(fontPanel, BorderLayout.NORTH);
 
     // Set up the color chooser panel and attach a change listener so that color
     // updates get reflected in our preview label.
-//    colorChooser = new JColorChooser(Color.black);
-//    colorChooser.getSelectionModel()
-//                .addChangeListener(new ChangeListener() {
-//      public void stateChanged(ChangeEvent e) {
-//        updatePreviewColor();
-//      }
-//    });
-//    c.add(colorChooser, BorderLayout.CENTER);
+    // colorChooser = new JColorChooser(Color.black);
+    // colorChooser.getSelectionModel()
+    // .addChangeListener(new ChangeListener() {
+    // public void stateChanged(ChangeEvent e) {
+    // updatePreviewColor();
+    // }
+    // });
+    // c.add(colorChooser, BorderLayout.CENTER);
 
-    JPanel previewPanel = new JPanel(new BorderLayout());
+    final JPanel previewPanel = new JPanel(new BorderLayout());
     previewLabel = new JLabel(Resources.getString("dlgFontChooserSampleText"));
-//    previewLabel.setForeground(colorChooser.getColor());
+    // previewLabel.setForeground(colorChooser.getColor());
     previewPanel.add(previewLabel, BorderLayout.CENTER);
 
     // Add in the Ok and Cancel buttons for our dialog box
-    JButton okButton = new JButton(Resources.getString("dlgFontChooserOkay"));
+    final JButton okButton = new JButton(
+        Resources.getString("dlgFontChooserOkay"));
     okButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
         closeAndSave();
       }
     });
-    JButton cancelButton = new JButton(Resources.getString(
+    final JButton cancelButton = new JButton(Resources.getString(
         "dlgFontChooserCancel"));
     cancelButton.addActionListener(new ActionListener() {
       public void actionPerformed(ActionEvent ae) {
@@ -118,7 +196,7 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
       }
     });
 
-    JPanel controlPanel = new JPanel();
+    final JPanel controlPanel = new JPanel();
     controlPanel.add(okButton);
     controlPanel.add(cancelButton);
     previewPanel.add(controlPanel, BorderLayout.SOUTH);
@@ -127,30 +205,35 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
     previewPanel.setMinimumSize(new Dimension(100, 100));
     previewPanel.setPreferredSize(new Dimension(100, 100));
 
-    c.add(previewPanel, BorderLayout.SOUTH);
+    container.add(previewPanel, BorderLayout.SOUTH);
 
     pack();
     updatePreviewFont();
-    GUIUtility.Center(this, parent);
+    GUIUtility.center(this, parent);
   }
 
+  /**
+   * Get the names of available font families
+   * 
+   * @return Font family names installed locally
+   */
   private String[] getFontFamilies() {
     String[] fontFamilies;
     Font[] fonts;
-    Map mapFamilies;
-    java.util.List lstFamilies;
-    Iterator itrFamilies;
+    Map<String, String> mapFamilies;
+    List<String> lstFamilies;
+    Iterator<String> itrFamilies;
 
     fonts = GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts();
 
-    mapFamilies = new HashMap();
+    mapFamilies = new HashMap<String, String>();
 
     // Get the unique list of font families
     for (int index = 0; index < fonts.length; ++index) {
       mapFamilies.put(fonts[index].getFamily(), null);
     }
 
-    lstFamilies = new ArrayList();
+    lstFamilies = new ArrayList<String>();
     itrFamilies = mapFamilies.keySet().iterator();
 
     while (itrFamilies.hasNext()) {
@@ -158,26 +241,25 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
     }
 
     Collections.sort(lstFamilies);
-    fontFamilies = (String[])lstFamilies.toArray(new String[lstFamilies.size()]);
+    fontFamilies = lstFamilies.toArray(new String[lstFamilies.size()]);
 
     return fontFamilies;
   }
 
-  // Ok, something in the font changed, so figure that out and make a
-  // new font for the preview label
+  @Override
   public void actionPerformed(ActionEvent ae) {
     // Check the name of the font
     if (!StyleConstants.getFontFamily(attributes)
         .equals(fontName.getSelectedItem())) {
       StyleConstants.setFontFamily(attributes,
-          (String)fontName.getSelectedItem());
+          (String) fontName.getSelectedItem());
     }
     // Check the font size (no error checking yet)
-//    if (StyleConstants.getFontSize(attributes) !=
-//                                   Integer.parseInt(fontSize.getText())) {
-//      StyleConstants.setFontSize(attributes,
-//                                 Integer.parseInt(fontSize.getText()));
-//    }
+    // if (StyleConstants.getFontSize(attributes) !=
+    // Integer.parseInt(fontSize.getText())) {
+    // StyleConstants.setFontSize(attributes,
+    // Integer.parseInt(fontSize.getText()));
+    // }
     // Check to see if the font should be bold
     if (StyleConstants.isBold(attributes) != fontBold.isSelected()) {
       StyleConstants.setBold(attributes, fontBold.isSelected());
@@ -190,72 +272,76 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
     updatePreviewFont();
   }
 
-  // Get the appropriate font from our attributes object and update
-  // the preview label
+  /**
+   * Get the appropriate font from our attributes object and update the preview
+   * label
+   */
   protected void updatePreviewFont() {
-    String name = StyleConstants.getFontFamily(attributes);
-    boolean bold = StyleConstants.isBold(attributes);
-    boolean ital = StyleConstants.isItalic(attributes);
-    int size = StyleConstants.getFontSize(attributes);
+    final String name = StyleConstants.getFontFamily(attributes);
+    final boolean bold = StyleConstants.isBold(attributes);
+    final boolean ital = StyleConstants.isItalic(attributes);
+    final int size = StyleConstants.getFontSize(attributes);
 
-    //Bold and italic don’t work properly in beta 4.
-    newFont = new Font(name, (bold ? Font.BOLD : 0) +
-        (ital ? Font.ITALIC : 0), size);
+    // Bold and italic don’t work properly in beta 4.
+    newFont = new Font(name, (bold ? Font.BOLD : 0)
+        + (ital ? Font.ITALIC : 0), size);
     previewLabel.setFont(newFont);
   }
 
-  // Get the appropriate color from our chooser and update previewLabel
-//  protected void updatePreviewColor() {
-//    previewLabel.setForeground(colorChooser.getColor());
-  // Manually force the label to repaint
-//    previewLabel.repaint();
-//  }
+  /**
+   * Get the chosen font
+   * 
+   * @return The chosen font
+   */
   public Font getNewFont() {
     return newFont;
   }
 
-//  public Color getNewColor() { return newColor; }
-//  public AttributeSet getAttributes() {
-//    return attributes;
-//  }
-
+  /**
+   * Close the dialog, saving the choices made by the user
+   */
   private void closeAndSave() {
-    // Save font & color information
-//    newFont = previewLabel.getFont();
-//    newColor = previewLabel.getForeground();
-
-    // Close the window
     setVisible(false);
     dispose();
   }
 
+  /**
+   * Close the dalog, discarding the choices made by the user
+   */
   private void closeAndCancel() {
-    // Erase any font information and then close the window
     newFont = null;
-//    newColor = null;
+
     setVisible(false);
     dispose();
   }
 
+  @Override
   public void keyPressed(KeyEvent e) {
   }
 
+  @Override
   public void keyReleased(KeyEvent e) {
     try {
-      if (StyleConstants.getFontSize(attributes) !=
-          Integer.parseInt(fontSize.getText())) {
+      if (StyleConstants.getFontSize(attributes) != Integer.parseInt(fontSize
+          .getText())) {
         StyleConstants.setFontSize(attributes,
             Integer.parseInt(fontSize.getText()));
         updatePreviewFont();
       }
-    }
-    catch (Throwable any) {
+    } catch (Throwable any) {
       // Not a legal font size value - maybe empty
       // Don't bother user with this since they may be in the middle of typing
       // a font size
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER
+            .debug(
+                "Error parsing the font size - may be in the process of being edited",
+                any);
+      }
     }
   }
 
+  @Override
   public void keyTyped(KeyEvent e) {
   }
 }

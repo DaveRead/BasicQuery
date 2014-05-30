@@ -1,48 +1,103 @@
 package us.daveread.basicquery.util.test;
 
 import java.util.Date;
-import junit.framework.*;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
+import junit.framework.TestCase;
+
 import org.apache.log4j.Logger;
 
 import us.daveread.basicquery.util.Utility;
 
 /**
- * <p>Title: </p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2006</p>
- *
- * <p>Company: </p>
- *
+ * <p>
+ * Title: Test the utility class
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2006-2014
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
  * @author David Read
- * @version $Id: UtilityTest.java,v 1.3 2006/05/30 17:38:01 daveread Exp $
  */
 public class UtilityTest extends TestCase {
-  private static final Logger logger = Logger.getLogger(UtilityTest.class);
+  /**
+   * Logger
+   */
+  private static final Logger LOGGER = Logger.getLogger(UtilityTest.class);
 
-  private Object[][] data = { {"R1/C1", "R1/C2", "R1/C3"}, {"R2/C1", "R2/C2",
-      "R2/C3"}, {null, null, null}, {"R3/C1", "R3/C2", "R3/C3"}, {"R0/C1",
-      "R0/C2", "R0/C3"}, {"R4/C1", "R4/C2", "R4/C3"}, {"R4/C1", "R4/C2",
-      "R4/C3"}, {"abcdefghijklmnop", "qrstuvwxyz", "0123456789"}, {null, null, null}
+  /**
+   * Test data
+   */
+  private Object[][] data = {
+      {
+          "R1/C1", "R1/C2", "R1/C3"
+      },
+      {
+          "R2/C1", "R2/C2", "R2/C3"
+      },
+      {
+          null, null, null
+      },
+      {
+          "R3/C1", "R3/C2", "R3/C3"
+      },
+      {
+          "R0/C1", "R0/C2", "R0/C3"
+      },
+      {
+          "R4/C1", "R4/C2", "R4/C3"
+      },
+      {
+          "R4/C1", "R4/C2", "R4/C3"
+      },
+      {
+          "abcdefghijklmnop", "qrstuvwxyz", "0123456789"
+      },
+      {
+          null, null, null
+      }
   };
 
-  private Object[][] wideData = { {
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"},
-      {"ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}
+  /**
+   * Test data - wide
+   */
+  private Object[][] wideData = {
+      {
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      },
+      {
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ",
+          "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+      }
   };
 
+  /**
+   * Test column names
+   */
   private String[] colNames = {
       "Col-1", "Col-2", "Col-3"
   };
 
+  /**
+   * Setup the test case instance
+   */
   public UtilityTest() {
   }
 
+  /**
+   * Test the replace method
+   */
   public void testReplace() {
     String value = "ABCDEFGHABCDEFABCDABC";
     value = Utility.replace(value, "ABC", "xy");
@@ -59,24 +114,21 @@ public class UtilityTest extends TestCase {
     try {
       value = Utility.replace(null, "ABC", "xy", 3, false);
       assertTrue(false);
-    }
-    catch (IllegalArgumentException iae) {
+    } catch (IllegalArgumentException iae) {
       assertTrue(true);
     }
 
     try {
       value = Utility.replace("ABCDEF", null, "xy", 3, false);
       assertTrue(false);
-    }
-    catch (IllegalArgumentException iae) {
+    } catch (IllegalArgumentException iae) {
       assertTrue(true);
     }
 
     try {
       value = Utility.replace("ABCDEF", "ABC", null, 3, false);
       assertTrue(false);
-    }
-    catch (IllegalArgumentException iae) {
+    } catch (IllegalArgumentException iae) {
       assertTrue(true);
     }
 
@@ -91,21 +143,22 @@ public class UtilityTest extends TestCase {
     try {
       value = Utility.replace("ABCDEF", "ABC", "xy", -1, false);
       assertTrue(false);
-    }
-    catch (IllegalArgumentException iae) {
+    } catch (IllegalArgumentException iae) {
       assertTrue(true);
     }
 
     try {
       value = Utility.replace("ABCDEF", "ABC", "xy", 10, false);
       assertTrue(false);
-    }
-    catch (IllegalArgumentException iae) {
+    } catch (IllegalArgumentException iae) {
       assertTrue(true);
     }
 
   }
 
+  /**
+   * Test the initial column sizes method
+   */
   public void testInitColumnSizes() {
     JTable table;
     DefaultTableModel model;
@@ -116,12 +169,15 @@ public class UtilityTest extends TestCase {
     width = table.getColumnModel().getColumn(1).getPreferredWidth();
     Utility.initColumnSizes(table, model);
 
-    logger.info("Initial width[" + width + "]  Updated width[" +
-        table.getColumnModel().getColumn(1).getPreferredWidth() + "]");
+    LOGGER.info("Initial width[" + width + "]  Updated width["
+        + table.getColumnModel().getColumn(1).getPreferredWidth() + "]");
 
     assertTrue(table.getColumnModel().getColumn(1).getPreferredWidth() > width);
   }
 
+  /**
+   * Test the get longest value method
+   */
   public void testGetLongestValues() {
     DefaultTableModel model;
     Object[] longest;
@@ -130,11 +186,14 @@ public class UtilityTest extends TestCase {
 
     longest = Utility.getLongestValues(model);
 
-    assertEquals("abcdefghijklmnop", (String)longest[0]);
-    assertEquals("qrstuvwxyz", (String)longest[1]);
-    assertEquals("0123456789", (String)longest[2]);
+    assertEquals("abcdefghijklmnop", (String) longest[0]);
+    assertEquals("qrstuvwxyz", (String) longest[1]);
+    assertEquals("0123456789", (String) longest[2]);
   }
 
+  /**
+   * Test the formatted date method
+   */
   public void testFormattedDate() {
     String date;
 
@@ -145,13 +204,19 @@ public class UtilityTest extends TestCase {
     assertTrue(date.charAt(4) == '-');
   }
 
+  /**
+   * Test the formatted number method
+   */
   public void testFormattedNumber() {
     String number;
 
-    number = Utility.formattedNumber(123, "#0000");
-    assertEquals("0123", number);
+    number = Utility.formattedNumber(150, "#0000");
+    assertEquals("0150", number);
   }
 
+  /**
+   * Test the insert character method
+   */
   public void testCharacterInsert() {
     String value;
 
@@ -162,6 +227,9 @@ public class UtilityTest extends TestCase {
     assertEquals("AB-CD", value);
   }
 
+  /**
+   * Test the split with quotes method
+   */
   public void testSplitWithQuotes() {
     String[] parsed;
 
@@ -176,7 +244,10 @@ public class UtilityTest extends TestCase {
     assertEquals("\"this;stays\"", parsed[1]);
     assertEquals("third", parsed[2]);
 
-    parsed = Utility.splitWithQuotes("Split;'this;stays';\"third;'still third;'more third;\"last third;fourth", ";");
+    parsed = Utility
+        .splitWithQuotes(
+            "Split;'this;stays';\"third;'still third;'more third;\"last third;fourth",
+            ";");
     assertEquals(4, parsed.length);
     assertEquals("Split", parsed[0]);
     assertEquals("'this;stays'", parsed[1]);

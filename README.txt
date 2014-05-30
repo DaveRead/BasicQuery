@@ -9,6 +9,9 @@ during tuning exercises.
 This readme provides a few details to help you get started.
 
 
+BasicQuery requires Java version 6 (1.6) or higher.
+
+
 Building BasicQuery from the Source Code
 ========================================
 BasicQuery includes a build.xml requiring Apache's Ant build tool.  
