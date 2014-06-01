@@ -9,14 +9,22 @@ import junit.framework.TestCase;
 import us.daveread.basicquery.gui.MaxHeightJScrollPane;
 
 /**
- * <p>Title: Test the max height scroll pane class</p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2006-2014</p>
- *
- * <p>Company: </p>
- *
+ * <p>
+ * Title: Test the max height scroll pane class
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2006-2014
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
  * @author David Read
  */
 public class MaxHeightJScrollPaneTest extends TestCase {
@@ -24,22 +32,22 @@ public class MaxHeightJScrollPaneTest extends TestCase {
    * Maximum height for the scroll pane
    */
   private static final int MAX_HEIGHT = 500;
-  
+
   /**
    * Dimensions for component 1
    */
   private static final Dimension JP1_DIM = new Dimension(200, 1000);
-  
+
   /**
    * Dimensions for component 2
    */
   private static final Dimension JP2_DIM = new Dimension(100, 1500);
-  
+
   /**
    * A scroll pane with a policy but no component
    */
   private MaxHeightJScrollPane scrollPaneCompOnly;
-  
+
   /**
    * A scroll pane with a policy and component
    */
@@ -80,10 +88,24 @@ public class MaxHeightJScrollPaneTest extends TestCase {
    * Test getting the height
    */
   public void testLockHeight() {
-    scrollPaneCompOnly.lockHeight();
+    // scrollPaneCompOnly.lockHeight();
 
-    assertTrue(jp1.getPreferredSize().height 
-        <= scrollPaneCompOnly.getPreferredSize().height);
+    // assertTrue(jp1.getPreferredSize().height
+    // <= scrollPaneCompOnly.getPreferredSize().height);
+
+    scrollPaneCompAndPolicy.lockHeight();
+    assertEquals("Heights should agree",
+        scrollPaneCompAndPolicy.getPreferredSize().height,
+        scrollPaneCompAndPolicy.getPreferredSize().height);
+
+    scrollPaneCompAndPolicy.lockHeight(1000);
+    assertEquals("Height should be locked", 1000,
+        scrollPaneCompAndPolicy.getPreferredSize().height);
+
+    scrollPaneCompAndPolicy.lockHeight(1);
+    assertEquals("Height should be locked at minimum", 20,
+        scrollPaneCompAndPolicy.getPreferredSize().height);
+
   }
 
   /**
@@ -92,8 +114,8 @@ public class MaxHeightJScrollPaneTest extends TestCase {
   public void testGetPreferredSize() {
     scrollPaneCompAndPolicy.lockHeight();
 
-    assertTrue(jp2.getPreferredSize().height 
-        <= scrollPaneCompAndPolicy.getPreferredSize().height);
+    assertTrue(jp2.getPreferredSize().height <= scrollPaneCompAndPolicy
+        .getPreferredSize().height);
   }
 
   /**
@@ -102,8 +124,8 @@ public class MaxHeightJScrollPaneTest extends TestCase {
   public void testGetMaximumSize() {
     scrollPaneCompAndPolicy.lockHeight();
 
-    assertTrue(jp2.getPreferredSize().height 
-        <= scrollPaneCompAndPolicy.getMaximumSize().height);
+    assertTrue(jp2.getPreferredSize().height <= scrollPaneCompAndPolicy
+        .getMaximumSize().height);
   }
 
   /**
@@ -112,8 +134,8 @@ public class MaxHeightJScrollPaneTest extends TestCase {
   public void testGetMinimumSize() {
     scrollPaneCompAndPolicy.lockHeight();
 
-    assertTrue(jp1.getPreferredSize().height 
-        <= scrollPaneCompOnly.getMinimumSize().height);
+    assertTrue(jp1.getPreferredSize().height <= scrollPaneCompOnly
+        .getMinimumSize().height);
   }
 
   /**
@@ -125,5 +147,18 @@ public class MaxHeightJScrollPaneTest extends TestCase {
     assertEquals(MAX_HEIGHT, scrollPaneCompOnly.getPreferredSize().height);
     assertEquals(MAX_HEIGHT, scrollPaneCompOnly.getMaximumSize().height);
     assertEquals(MAX_HEIGHT, scrollPaneCompOnly.getMinimumSize().height);
+  }
+
+  /**
+   * Create a scroll pane with no
+   */
+  public void testOtherConstructors() {
+    MaxHeightJScrollPane scrollPane = new MaxHeightJScrollPane();
+    assertNotNull(scrollPane);
+
+    scrollPane = new MaxHeightJScrollPane(
+        JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+        JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+    assertNotNull(scrollPane);
   }
 }

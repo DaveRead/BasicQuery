@@ -105,14 +105,10 @@ public class ImageUtility {
       while ((ilRead = islImage.read(bylTemp)) >= 0) {
         ilSize += ilRead;
       }
-    } catch (Exception excAny) {
-      LOGGER.error("Failed to load image [" + saImageName + "]", excAny);
-    }
 
-    LOGGER.info("Image Size [" + ilSize + "]");
+      LOGGER.info("Image Size [" + ilSize + "]");
 
-    if (ilSize > 0) {
-      try {
+      if (ilSize > 0) {
         islImage = getImageAsStream(saImageName);
         bylImage = new byte[ilSize];
         ilPosit = 0;
@@ -122,9 +118,9 @@ public class ImageUtility {
           LOGGER.debug("Loading, Bytes[" + ilRead
               + "]  Total[" + ilPosit + "]  Expect[" + ilSize + "]");
         }
-      } catch (Throwable excAny) {
-        LOGGER.error("Failed to load image", excAny);
       }
+    } catch (Throwable excAny) {
+      LOGGER.error("Failed to load image: " + saImageName, excAny);
     }
 
     return bylImage;

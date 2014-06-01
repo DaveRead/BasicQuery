@@ -100,6 +100,9 @@ import us.daveread.basicquery.gui.InsertTime;
 import us.daveread.basicquery.gui.MaxHeightJScrollPane;
 import us.daveread.basicquery.gui.MessageStyleFactory;
 import us.daveread.basicquery.images.ImageUtility;
+import us.daveread.basicquery.queries.Query;
+import us.daveread.basicquery.queries.QueryHistory;
+import us.daveread.basicquery.queries.QueryInfo;
 import us.daveread.basicquery.util.CheckLatestVersion;
 import us.daveread.basicquery.util.Configuration;
 import us.daveread.basicquery.util.ListTableModel;
@@ -156,7 +159,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "01.05.00";
+  private static final String VERSION = "01.06.00";
 
   /**
    * Logger
@@ -835,21 +838,6 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * Buttons to move through history of executed queries
    */
   private JButton previousQuery, nextQuery;
-
-  /**
-   * History of executed queries
-   */
-  private List<QueryHistory> historyQueries;
-
-  /**
-   * Currently chosen position in query history list
-   */
-  private int historyPosition;
-
-  /**
-   * Maximum size of the query history list
-   */
-  private int maxHistoryEntries = 1000;
 
   /**
    * Collection of message styles used in status output text pane
@@ -1988,10 +1976,10 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     }
 
     // No queries executed yet, disable prev/next buttons
-    previousQuery.setEnabled(false);
-    nextQuery.setEnabled(false);
-    historyQueries = new ArrayList<QueryHistory>();
-    historyPosition = -1;
+    // TODO is this working?
+    setPrevNextIndication();
+//    previousQuery.setEnabled(false);
+//    nextQuery.setEnabled(false);
   }
 
   /**
@@ -5477,6 +5465,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     } else {
       queryText.setText("");
     }
+    
+    setPrevNextIndication();    
   }
 
   /**
@@ -5720,6 +5710,10 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         if (returnVal == JOptionPane.NO_OPTION) {
           querySelection.removeAllItems();
           queryText.setText("");
+          QueryHistory.getInstance().clearAllQueries();
+
+          // Update GUI
+          setPrevNextIndication();
         } else if (returnVal == JOptionPane.CANCEL_OPTION) {
           chosenSQLFile = null;
         }
@@ -5728,6 +5722,10 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         querySelection.removeAllItems();
         queryText.setText("");
         loadCombo(querySelection, queryFilename);
+        QueryHistory.getInstance().clearAllQueries();
+
+        // Update GUI
+        setPrevNextIndication();
       }
     }
 
@@ -5747,66 +5745,16 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    *          The table model with the current query results
    */
   private void histMaintQueryExecuted(TableModel results) {
-    int thisQuery, lastQuery;
-
-    thisQuery = querySelection.getSelectedIndex();
+    final int thisQuery = querySelection.getSelectedIndex();
 
     if (thisQuery >= 0) {
-
-      if (historyPosition >= 0) {
-        lastQuery = ((QueryHistory) historyQueries.get(historyPosition)).
-            getSQLIndex();
-      } else {
-        lastQuery = -1;
-      }
-
-      if (thisQuery != lastQuery) {
-        // If there were different next queries they are removed by the
-        // execution of
-        // a query other than the one pointed to on the history list.
-        histMaintRemoveFollowingQueries();
-        historyQueries.add(new QueryHistory(thisQuery,
+      QueryHistory.getInstance().addQuery(new QueryInfo(thisQuery,
             connectString.getSelectedIndex(),
             results));
-        // Update history position
-        historyPosition = historyQueries.size() - 1;
-      } else {
-        ((QueryHistory) historyQueries.get(historyPosition)).setURLIndex(
-            connectString.getSelectedIndex());
-        ((QueryHistory) historyQueries.get(historyPosition)).setResults(
-            results);
-      }
-
-      // Limit to defined number of entries
-      if (historyQueries.size() > maxHistoryEntries) {
-        historyQueries.remove(0);
-        // Update history position
-        historyPosition = historyQueries.size() - 1;
-      }
-
-      LOGGER.debug("historyPosition=" + historyPosition);
-
-      // Update GUI
-      setPrevNextIndication();
-    }
-  }
-
-  /**
-   * Remove queries that follow the currently selected query in the history
-   * list.
-   */
-  private void histMaintRemoveFollowingQueries() {
-    int histNewEnd;
-
-    histNewEnd = historyPosition + 1;
-    while (historyQueries.size() > histNewEnd) {
-      LOGGER.debug("Removed item at=" + histNewEnd);
-      historyQueries.remove(histNewEnd);
     }
 
-    LOGGER.debug("historyPosition=" + historyPosition + " historyQueries.size="
-        +
-        historyQueries.size());
+    // Update GUI
+    setPrevNextIndication();
   }
 
   /**
@@ -5816,8 +5764,12 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * list.
    */
   private void setPrevNextIndication() {
-    previousQuery.setEnabled(historyPosition > -1);
-    nextQuery.setEnabled(historyPosition < historyQueries.size() - 1);
+    previousQuery
+        .setEnabled(QueryHistory.getInstance().hasPrevious()
+            || (QueryHistory.getInstance().getNumberOfQueries() > 0 && QueryHistory
+                .getInstance().getCurrentQueryInfo().getSQLIndex() != querySelection
+                .getSelectedIndex()));
+    nextQuery.setEnabled(QueryHistory.getInstance().hasNext());
   }
 
   /**
@@ -5836,24 +5788,9 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    *          The index of the deleted query in the stored query list.
    */
   private void histMaintQueryDeleted(int queryIndex) {
-    int loop, thisIndex;
+    QueryHistory.getInstance().deleteQueryAtIndex(queryIndex);
 
-    loop = 0;
-    while (loop < historyQueries.size()) {
-      thisIndex = ((QueryHistory) historyQueries.get(loop)).getSQLIndex();
-      if (thisIndex < queryIndex) {
-        ++loop;
-      } else if (thisIndex == queryIndex) {
-        historyQueries.remove(loop);
-        if (historyPosition >= loop) {
-          historyPosition--;
-        }
-      } else {
-        thisIndex--;
-        ((QueryHistory) historyQueries.get(loop)).setSQLIndex(thisIndex);
-        ++loop;
-      }
-    }
+    // Update GUI
     setPrevNextIndication();
   }
 
@@ -5865,63 +5802,68 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * URL used for the query will also be selected.
    */
   private void histSelectPrev() {
-    // Two possibilities, the user has changed the selected query without
-    // executing
-    // and wants to return to the last executed; or
-    // the latest executed query is currently selected in which case the user
-    // expects to return to a query before this one
-
-    int currentSQLIndex, histSQLIndex, histConnectIndex;
-    TableModel histModel;
+    int currentSQLIndex, currentConnectIndex;
+    int histSQLIndex, histConnectIndex;
+    boolean newQuery = false;
+    TableModel histModel = null;
     TableSorter sorter;
+    QueryInfo queryInfo;
 
     currentSQLIndex = querySelection.getSelectedIndex();
+    currentConnectIndex = connectString.getSelectedIndex();
 
-    histSQLIndex = ((QueryHistory) historyQueries.get(historyPosition)).
-        getSQLIndex();
-    histConnectIndex = ((QueryHistory) historyQueries.get(historyPosition)).
-        getURLIndex();
-    histModel = ((QueryHistory) historyQueries.get(historyPosition)).
-        getResults();
+    /**
+     * Two possibilities, the user has changed the selected query and/or
+     * connection string without executing and wants to return to the last
+     * executed; or the latest executed query is currently selected in which
+     * case the user expects to return to a query before this one
+     */
+    if (QueryHistory.getInstance().getNumberOfQueries() > 0) {
+      queryInfo = QueryHistory.getInstance().getCurrentQueryInfo();
+      histSQLIndex = queryInfo.getSQLIndex();
+      histConnectIndex = queryInfo.getURLIndex();
 
-    if (currentSQLIndex == histSQLIndex && historyPosition > -1) {
-      --historyPosition;
-      if (historyPosition > -1) {
-        histSQLIndex = ((QueryHistory) historyQueries.get(historyPosition)).
-            getSQLIndex();
-        histConnectIndex = ((QueryHistory) historyQueries.get(historyPosition))
-            .
-            getURLIndex();
-        histModel = ((QueryHistory) historyQueries.get(historyPosition)).
-            getResults();
+      if (histSQLIndex == currentSQLIndex
+          && histConnectIndex == currentConnectIndex) {
+        QueryHistory.getInstance().moveBackward();
+        queryInfo = QueryHistory.getInstance().getCurrentQueryInfo();
+        histSQLIndex = queryInfo.getSQLIndex();
+        histConnectIndex = queryInfo.getURLIndex();
+        histModel = queryInfo.getResults();
+        newQuery = true;
       }
-    }
 
-    querySelection.setSelectedIndex(histSQLIndex);
+      querySelection.setSelectedIndex(histSQLIndex);
 
-    if (configHistoryAssocSQLAndConnect.isSelected()) {
-      connectString.setSelectedIndex(histConnectIndex);
-    }
-
-    try {
-      sorter = (TableSorter) table.getModel();
-      sorter.removeMouseListenerFromHeaderInTable(table);
-    } catch (Throwable any) {
-      // Probably table was empty
-      if (LOGGER.isDebugEnabled()) {
-        LOGGER.debug(
-            "Error when sorting results, probably no results in model", any);
+      if (configHistoryAssocSQLAndConnect.isSelected()) {
+        connectString.setSelectedIndex(histConnectIndex);
       }
-    }
-    table.setModel(new ListTableModel<Object>());
-    if (histModel != null) {
-      sorter = new TableSorter(histModel);
-      table.setModel(sorter);
-      sorter.addMouseListenerToHeaderInTable(table);
-      Utility.initColumnSizes(table, sorter);
-    }
 
-    setPrevNextIndication();
+      if (newQuery) {
+        try {
+          sorter = (TableSorter) table.getModel();
+          sorter.removeMouseListenerFromHeaderInTable(table);
+        } catch (Throwable any) {
+          // Probably table was empty
+          if (LOGGER.isDebugEnabled()) {
+            LOGGER
+                .debug(
+                    "Error when sorting results, probably no results in model",
+                    any);
+          }
+        }
+        table.setModel(new ListTableModel<Object>());
+        if (histModel != null) {
+          sorter = new TableSorter(histModel);
+          table.setModel(sorter);
+          sorter.addMouseListenerToHeaderInTable(table);
+          Utility.initColumnSizes(table, sorter);
+        }
+      }
+
+      // Update GUI
+      setPrevNextIndication();
+    }
   }
 
   /**
@@ -5931,34 +5873,16 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * URL used for the query will also be selected.
    */
   private void histSelectNext() {
-    // Two possibilities, the user has changed the selected query without
-    // executing
-    // and wants to move to what was the next executed query; or
-    // a previous query is currently selected in which case the user
-    // expects to return to a query after this one
-    int currentSQLIndex, histSQLIndex, histConnectIndex;
-    TableModel histModel;
+    int histSQLIndex, histConnectIndex;
+    TableModel histModel = null;
     TableSorter sorter;
+    QueryInfo queryInfo;
 
-    currentSQLIndex = querySelection.getSelectedIndex();
-    ++historyPosition;
-    histSQLIndex = ((QueryHistory) historyQueries.get(historyPosition)).
-        getSQLIndex();
-    histConnectIndex = ((QueryHistory) historyQueries.get(historyPosition)).
-        getURLIndex();
-    histModel = ((QueryHistory) historyQueries.get(historyPosition)).
-        getResults();
-
-    if (currentSQLIndex == histSQLIndex
-        && historyPosition < historyQueries.size() - 1) {
-      ++historyPosition;
-      histSQLIndex = ((QueryHistory) historyQueries.get(historyPosition)).
-          getSQLIndex();
-      histConnectIndex = ((QueryHistory) historyQueries.get(historyPosition)).
-          getURLIndex();
-      histModel = ((QueryHistory) historyQueries.get(historyPosition)).
-          getResults();
-    }
+    QueryHistory.getInstance().moveForward();
+    queryInfo = QueryHistory.getInstance().getCurrentQueryInfo();
+    histSQLIndex = queryInfo.getSQLIndex();
+    histConnectIndex = queryInfo.getURLIndex();
+    histModel = queryInfo.getResults();
 
     querySelection.setSelectedIndex(histSQLIndex);
 
@@ -5973,7 +5897,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       // Probably table was empty
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(
-            "Error when sorting results, probably no results in model", any);
+              "Error when sorting results, probably no results in model", any);
       }
     }
     table.setModel(new ListTableModel<Object>());
@@ -5984,6 +5908,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       Utility.initColumnSizes(table, sorter);
     }
 
+    // Update GUI
     setPrevNextIndication();
   }
 
@@ -6014,8 +5939,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    *          List The collection of queries
    */
   private void rebuildSQLListing(List<Object> queries) {
-    historyQueries = new ArrayList<QueryHistory>();
-    historyPosition = -1;
+    QueryHistory.getInstance().clearAllQueries();
 
     querySelection.removeAllItems();
     for (int loop = 0; loop < queries.size(); ++loop) {

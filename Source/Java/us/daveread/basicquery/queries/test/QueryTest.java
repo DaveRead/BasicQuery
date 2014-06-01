@@ -1,17 +1,25 @@
-package us.daveread.basicquery.test;
+package us.daveread.basicquery.queries.test;
 
 import junit.framework.TestCase;
-import us.daveread.basicquery.Query;
+import us.daveread.basicquery.queries.Query;
 
 /**
- * <p>Title: Test the query class</p>
- *
- * <p>Description: </p>
- *
- * <p>Copyright: Copyright (c) 2006-2014</p>
- *
- * <p>Company: </p>
- *
+ * <p>
+ * Title: Test the query class
+ * </p>
+ * 
+ * <p>
+ * Description:
+ * </p>
+ * 
+ * <p>
+ * Copyright: Copyright (c) 2006-2014
+ * </p>
+ * 
+ * <p>
+ * Company:
+ * </p>
+ * 
  * @author David Read
  */
 public class QueryTest extends TestCase {
@@ -19,7 +27,7 @@ public class QueryTest extends TestCase {
    * Test select statement
    */
   private static final String SELECT_STATEMENT = "select this from that where what";
-  
+
   /**
    * Test update statement
    */
@@ -29,17 +37,17 @@ public class QueryTest extends TestCase {
    * A query in default mode
    */
   private Query queryDefMode;
-  
+
   /**
    * A query in select mode
    */
   private Query querySelMode;
-  
+
   /**
    * A query in update mode
    */
   private Query queryUpdMode;
-  
+
   /**
    * A query in describe mode
    */
@@ -104,5 +112,64 @@ public class QueryTest extends TestCase {
     assertEquals(SELECT_STATEMENT + "2", querySelMode.toString());
     assertEquals(UPDATE_STATEMENT, queryUpdMode.toString());
     assertEquals(SELECT_STATEMENT + "3", queryDesMode.toString());
+  }
+
+  /**
+   * Test comment identification
+   */
+  public void testIsCommented() {
+    final Query commentedQuery = new Query("// " + querySelMode.getRawSql(),
+        querySelMode.getMode());
+
+    assertEquals("Should be commented", true, commentedQuery.isCommented());
+
+    assertEquals("Should not be commented", false, querySelMode.isCommented());
+  }
+
+  /**
+   * Test equality evaluation
+   */
+  public void testEquals() {
+    final Object notQuery = new Object();
+    final Object aQuery = querySelMode;
+    final Query sameAsSel = new Query(querySelMode.getRawSql(),
+        querySelMode.getMode());
+    final Query sameAsSelButCommented = new Query("// "
+        + querySelMode.getRawSql(),
+        querySelMode.getMode());
+    final Query diffFromSel = new Query(queryDesMode.getRawSql(),
+        queryDesMode.getMode());
+
+    assertTrue("Should be equal", sameAsSel.equals(querySelMode));
+    assertTrue("Should be equal even though commented",
+        sameAsSelButCommented.equals(querySelMode));
+    assertTrue("Should be equal even though commented",
+        querySelMode.equals(sameAsSelButCommented));
+    assertTrue("Should be equal",
+        aQuery.equals(querySelMode));
+    assertFalse("Should not be equal", diffFromSel.equals(querySelMode));
+    assertFalse("Should not be equal", querySelMode.equals(notQuery));
+    assertFalse("Should not be equal", querySelMode.equals((Query) null));
+
+  }
+
+  /**
+   * Test hash code calculation
+   */
+  public void testHashCode() {
+    final Query sameAsSel = new Query(querySelMode.getRawSql(),
+        querySelMode.getMode());
+    final Query sameAsSelButCommented = new Query("// "
+        + querySelMode.getRawSql(), querySelMode.getMode());
+    final Query diffFromSel = new Query(queryDesMode.getRawSql(),
+        queryDesMode.getMode());
+
+    assertEquals("Should have same hash code", querySelMode.hashCode(),
+        sameAsSel.hashCode());
+    assertEquals("Should have same hash code even though commented",
+        querySelMode.hashCode(), sameAsSelButCommented.hashCode());
+    assertTrue("Should have different hash code",
+        querySelMode.hashCode() != diffFromSel.hashCode());
+
   }
 }

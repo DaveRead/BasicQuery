@@ -1,4 +1,4 @@
-package us.daveread.basicquery;
+package us.daveread.basicquery.queries;
 
 /**
  * Title: Query
@@ -143,7 +143,11 @@ public class Query {
 
   @Override
   public boolean equals(Object object) {
-    return equals((Query) object);
+    if (object instanceof Query) {
+      return equals((Query) object);
+    } 
+    
+    return false;
   }
 
   /**
@@ -164,13 +168,13 @@ public class Query {
     thisQuery = getRawSql();
     
     if (isCommented()) {
-      thisQuery = thisQuery.substring(2);
+      thisQuery = thisQuery.substring(2).trim();
     }
 
     otherQuery = query.getRawSql();
     
     if (query.isCommented()) {
-      otherQuery = otherQuery.substring(2);
+      otherQuery = otherQuery.substring(2).trim();
     }
 
     return thisQuery.equals(otherQuery);
@@ -179,7 +183,7 @@ public class Query {
   @Override
   public int hashCode() {
     if (isCommented()) {
-      return getRawSql().substring(2).hashCode();
+      return getRawSql().substring(2).trim().hashCode();
     } else {
       return getRawSql().hashCode();
     }

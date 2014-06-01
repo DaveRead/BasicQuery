@@ -1,10 +1,10 @@
-package us.daveread.basicquery;
+package us.daveread.basicquery.queries;
 
 import java.lang.ref.SoftReference;
 import javax.swing.table.TableModel;
 
 /**
- * Title: QueryHistory
+ * Title: QueryInfo
  * <p>
  * Description: Represents an individual SQL statement index and associated URL.
  * This is used in a collection to retain a history list of executed queries.
@@ -34,7 +34,7 @@ import javax.swing.table.TableModel;
  * @author David Read
  */
 
-public class QueryHistory {
+public class QueryInfo {
   /**
    * The index in the list of SQL statements represented by this history entry
    */
@@ -61,7 +61,7 @@ public class QueryHistory {
    * @param pResults
    *          The result model
    */
-  public QueryHistory(int pSQLIndex, int pURLIndex, TableModel pResults) {
+  public QueryInfo(int pSQLIndex, int pURLIndex, TableModel pResults) {
     setSQLIndex(pSQLIndex);
     setURLIndex(pURLIndex);
     setResults(pResults);

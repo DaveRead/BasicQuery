@@ -1,14 +1,14 @@
-package us.daveread.basicquery.test;
+package us.daveread.basicquery.queries.test;
 
 import javax.swing.table.DefaultTableModel;
 
 import junit.framework.TestCase;
 
-import us.daveread.basicquery.QueryHistory;
+import us.daveread.basicquery.queries.QueryInfo;
 
 /**
  * <p>
- * Title: Test the query history class
+ * Title: Test the query info class
  * </p>
  * 
  * <p>
@@ -25,7 +25,7 @@ import us.daveread.basicquery.QueryHistory;
  * 
  * @author David Read
  */
-public class QueryHistoryTest extends TestCase {
+public class QueryInfoTest extends TestCase {
   /**
    * Test index for the URL
    */
@@ -74,21 +74,21 @@ public class QueryHistoryTest extends TestCase {
   };
 
   /**
-   * The query history instance to test
+   * The query info instance to test
    */
-  private QueryHistory hist;
+  private QueryInfo hist;
   
   /**
    * Setup the test case instance
    */
-  public QueryHistoryTest() {
+  public QueryInfoTest() {
   }
 
   /**
    * Setup the test
    */
   public void setUp() {
-    hist = new QueryHistory(1, 5, new DefaultTableModel(TEST_TABLE_DATA, TEST_COLUMN_NAMES));
+    hist = new QueryInfo(1, 5, new DefaultTableModel(TEST_TABLE_DATA, TEST_COLUMN_NAMES));
   }
 
   /**

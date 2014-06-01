@@ -91,6 +91,13 @@ public class FlashForegroundTest extends TestCase {
 
     runIt.interrupt();
 
+    try {
+      Thread.sleep(1000);
+    }
+    catch (Throwable any) {
+      LOGGER.warn("Thread sleep error during test execution", any);
+    }
+    
     assertTrue(runIt.isInterrupted() || !runIt.isAlive());
   }
 }
