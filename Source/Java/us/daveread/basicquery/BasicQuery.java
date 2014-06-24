@@ -10,6 +10,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
@@ -107,6 +109,7 @@ import us.daveread.basicquery.util.CheckLatestVersion;
 import us.daveread.basicquery.util.Configuration;
 import us.daveread.basicquery.util.ListTableModel;
 import us.daveread.basicquery.util.NewVersionInformation;
+import us.daveread.basicquery.util.RdbToRdf;
 import us.daveread.basicquery.util.Resources;
 import us.daveread.basicquery.util.TableSorter;
 import us.daveread.basicquery.util.Utility;
@@ -149,7 +152,7 @@ import us.daveread.basicquery.util.Utility;
  */
 
 public class BasicQuery extends JFrame implements Runnable, ActionListener,
-    WindowListener, Observer {
+    WindowListener, Observer, KeyListener {
 
   /**
    * Serial version id - update if the serialization of this classes changes
@@ -159,7 +162,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "01.06.00";
+  private static final String VERSION = "02.00.02";
 
   /**
    * Logger
@@ -376,6 +379,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   private static final String PROP_FONT_ITALIC = "FONTITALIC";
 
   /**
+   * Latest directory used when choosing a file
+   */
+  private static final String PROP_LATEST_DIRECTORY = "LATEST_FILE_DIRECTORY";
+
+  /**
    * Default directory name for DB driver files
    */
   private static final String DEFAULT_DBDRIVERDIR = "DBDrivers";
@@ -476,6 +484,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * Query run mode - all statements
    */
   private static final int RUNTYPE_ALL = 1;
+
+  /**
+   * Query run mode - export results as triples
+   */
+  private static final int RUNTYPE_TRIPLE_EXPORT = 2;
 
   /**
    * System property supplying user's configured language code
@@ -765,6 +778,16 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   private static final int COLOR_YELLOW_B_VALUE = 192;
 
   /**
+   * File export format: CSV
+   */
+  private static final int FILE_EXPORT_CSV = 0;
+
+  /**
+   * File export format: Triples
+   */
+  private static final int FILE_EXPORT_TRIPLES = 1;
+
+  /**
    * SQL results table
    */
   private JTable table;
@@ -894,6 +917,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * Menu item - write current results to a CSV file
    */
   private JMenuItem fileSaveAsCSV;
+
+  /**
+   * Menu item - write current results to an ontology file
+   */
+  private JMenuItem fileSaveAsTriples;
 
   /**
    * Menu item - choose whether to export BLOBs to files when exporting results
@@ -1160,6 +1188,16 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   private String scWarnSelectPatterns;
 
   /**
+   * File for exporting results
+   */
+  private File exportFile;
+
+  /**
+   * Latest directory used when choosing a file
+   */
+  private File latestFileDirectory;
+
+  /**
    * Constructs a Basic Query instance
    * 
    * @param wantGUI
@@ -1379,6 +1417,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         BorderLayout.SOUTH);
     queryText.setLineWrap(true);
     queryText.setWrapStyleWord(true);
+    queryText.addKeyListener(this);
 
     panel.add(outerPanel, BorderLayout.CENTER);
 
@@ -1456,6 +1495,9 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     bGroup.add(asQuery);
     bGroup.add(asUpdate);
     bGroup.add(asDescribe);
+    asQuery.addActionListener(this);
+    asUpdate.addActionListener(this);
+    asDescribe.addActionListener(this);
     flowPanel.add(boxedPanel);
 
     flowPanel.add(new JLabel("     "));
@@ -1773,6 +1815,16 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     props.setProperty(PROP_FONT_BOLD, getFont().isBold() ? "YES" : "NO");
     props.setProperty(PROP_FONT_ITALIC, getFont().isItalic() ? "YES" : "NO");
 
+    // File access
+    if (latestFileDirectory != null) {
+      if (latestFileDirectory.isDirectory()) {
+        props.setProperty(PROP_LATEST_DIRECTORY,
+            latestFileDirectory.getAbsolutePath());
+      } else {
+        props.setProperty(PROP_LATEST_DIRECTORY, latestFileDirectory
+            .getParentFile().getAbsolutePath());
+      }
+    }
     // Write out the properties to the file
 
     props.store();
@@ -1899,6 +1951,17 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         DEFAULTWARNSELECTPATTERNS);
     scWarnUpdatePatterns = props.getProperty(PROP_WARNUPDATEPATTERNS,
         DEFAULTWARNUPDATEPATTERNS);
+
+    // File access
+    temp = props.getProperty(PROP_LATEST_DIRECTORY);
+    if (temp != null && temp.trim().length() > 0) {
+      try {
+        latestFileDirectory = new File(temp);
+      } catch (Throwable throwable) {
+        LOGGER.warn("Unable to set the default file directory to: " + temp,
+            throwable);
+      }
+    }
   }
 
   /**
@@ -1978,8 +2041,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // No queries executed yet, disable prev/next buttons
     // TODO is this working?
     setPrevNextIndication();
-//    previousQuery.setEnabled(false);
-//    nextQuery.setEnabled(false);
+    // previousQuery.setEnabled(false);
+    // nextQuery.setEnabled(false);
   }
 
   /**
@@ -2163,6 +2226,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     fileLogResults.setSelected(false);
     menu.add(fileLogResults);
 
+    menu.addSeparator();
+
     // File | Export Results As CSV
     fileSaveAsCSV = new JMenuItem(Resources.getString("mnuFileExportCSVLabel"));
     fileSaveAsCSV.setAccelerator(KeyStroke.getKeyStroke(Resources.getChar(
@@ -2174,6 +2239,21 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     fileSaveAsCSV.addActionListener(this);
     fileSaveAsCSV.setEnabled(false);
     menu.add(fileSaveAsCSV);
+
+    // File | Export Results As Triples
+    fileSaveAsTriples = new JMenuItem(
+        Resources.getString("mnuFileExportTriplesLabel"));
+    fileSaveAsTriples.setAccelerator(KeyStroke.getKeyStroke(Resources.getChar(
+        "mnuFileExportTriplesAccel"),
+        ActionEvent.ALT_MASK));
+    fileSaveAsTriples.setMnemonic(Resources
+        .getChar("mnuFileExportTriplesAccel"));
+    fileSaveAsTriples.getAccessibleContext().setAccessibleDescription(
+        Resources.
+            getString("mnuFileExportTriplesDesc"));
+    fileSaveAsTriples.addActionListener(new ExportResultsAsTriplesListener());
+    fileSaveAsTriples.setEnabled(false);
+    menu.add(fileSaveAsTriples);
 
     // File | Save BLOBs
     fileSaveBLOBs = new JMenuItem(Resources.getString("mnuFileSaveBLOBLabel"));
@@ -3215,7 +3295,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       sorter = new TableSorter(model);
 
       if (!commentedQuery()) { // if query is not commented-out
-        execute(sqlStatement, model);
+        execute(sqlStatement, model, null);
         if (!Thread.currentThread().isInterrupted()) {
           table.setModel(sorter);
           sorter.addMouseListenerToHeaderInTable(table);
@@ -3372,8 +3452,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    *          The SQL statement to execute
    * @param model
    *          The model to populate with the results
+   * @param tripleFile
+   *          The location to write the results to as triples.
    */
-  private void execute(String rawSqlStatement, ListTableModel<Object> model) {
+  private void execute(String rawSqlStatement, ListTableModel<Object> model,
+      File tripleFile) {
     String sqlStatement = rawSqlStatement;
     Statement stmt = null;
     ResultSet result = null;
@@ -3395,7 +3478,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     Date queryReady = null;
     Date queryRSFetched = null;
     Date queryRSProcessed = null;
-    int rows = 0;
+    long rows = 0;
     int cols = 0;
     boolean hasParams = false;
     final List<StatementParameter> allParams = new ArrayList<StatementParameter>();
@@ -3613,7 +3696,23 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
           }
         }
 
-        if (fileLogResults.isSelected()) {
+        if (tripleFile != null) {
+          try {
+            final RdbToRdf exporter = new RdbToRdf(
+                tripleFile.getAbsolutePath(), getQuery().getSql(), result);
+            exporter.run();
+            rows = exporter.getLatestNumberOfRowsExported();
+            messageOut("");
+            messageOut(Resources.getString("msgEndExportToFile"), STYLE_BOLD);
+          } catch (Throwable throwable) {
+            messageOut(
+                Resources.getString("errFailDataSave", throwable.toString()),
+                STYLE_RED);
+            LOGGER.error(
+                "Failed to save data to triples file: "
+                    + tripleFile.getAbsolutePath(), throwable);
+          }
+        } else if (fileLogResults.isSelected()) {
           writeDataAsCSV(sqlStatement, model, DBRESULTS_NAME, result, myType,
               false);
         } else {
@@ -3757,12 +3856,13 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         rows = stmt.getUpdateCount();
       }
 
-      messageOut("\n" + Resources.getString("msgRows") + " ", STYLE_BOLD, false);
+      messageOut("\n" + Resources.getString("msgRows") + " ", STYLE_NORMAL, false);
       if (rows == stmt.getMaxRows() && rows > 0) {
         messageOut("" + rows, STYLE_YELLOW);
       } else {
         messageOut("" + rows, STYLE_BOLD);
       }
+      messageOut("");
     } catch (SQLException sql) {
       LOGGER.error("Error executing SQL", sql);
       messageOut(Resources.getString("errFailSQL", sql.getClass().getName(),
@@ -3782,7 +3882,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       modeOfCurrentTable = -1;
     } finally {
       fileSaveBLOBs.setEnabled(hasBLOB);
-      fileSaveAsCSV.setEnabled(hasResults && model.getRowCount() > 0);
+      setExportAvailable((hasResults && model.getRowCount() > 0)
+          || tripleFile != null);
       queryMakeInsert.setEnabled(modeOfCurrentTable == Query.MODE_DESCRIBE
           || modeOfCurrentTable == Query.MODE_QUERY);
 
@@ -4295,7 +4396,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       java.util.Date queryStart, java.util.Date queryReady,
       java.util.Date queryRSFetched,
       java.util.Date queryRSProcessed,
-      int rows, int cols, TableModel model,
+      long rows, int cols, TableModel model,
       List<Object> outParams) {
     Runtime runtime;
     String runStats;
@@ -4994,12 +5095,14 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   }
 
   /**
-   * Saves the Result in a file with the .csv extension
+   * Exports the results to a file
    * 
    * @param model
    *          The model for the current results
+   * @param fileType
+   *          The export file type
    */
-  private void chooseFileForSave(TableModel model) {
+  private void chooseFileForSave(TableModel model, int fileType) {
     final JFileChooser chooser = new JFileChooser();
     int returnVal;
 
@@ -5007,10 +5110,32 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     chooser.setApproveButtonText(Resources.getString("dlgSaveDataButton"));
     chooser.setApproveButtonMnemonic(Resources.getChar(
         "dlgSaveDataButtonMnemonic"));
+
+    if (latestFileDirectory != null) {
+      if (latestFileDirectory.isDirectory()) {
+        chooser.setCurrentDirectory(latestFileDirectory);
+      } else if (latestFileDirectory.getParentFile().isDirectory()) {
+        chooser.setCurrentDirectory(latestFileDirectory.getParentFile());
+      }
+    }
+
     returnVal = chooser.showOpenDialog(this);
 
     if (returnVal == JFileChooser.APPROVE_OPTION) {
-      saveResultAsCSV(model, chooser.getSelectedFile().getAbsoluteFile());
+      latestFileDirectory = chooser.getSelectedFile().getParentFile();
+
+      switch (fileType) {
+        case FILE_EXPORT_CSV:
+          saveResultAsCSV(model, chooser.getSelectedFile().getAbsoluteFile());
+          break;
+        case FILE_EXPORT_TRIPLES:
+          saveResultsAsTriples(model, chooser.getSelectedFile()
+              .getAbsoluteFile());
+          break;
+        default:
+          throw new IllegalArgumentException(
+              "Unknown file type mode for export: " + fileType);
+      }
     }
   }
 
@@ -5061,6 +5186,60 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     if (okToWrite) {
       writeDataAsCSV(getQuery().getSql(), model, fileName, false);
+    }
+  }
+
+  /**
+   * Saves the Result in a file to a Turtle file with the .ttl extension
+   * 
+   * @param model
+   *          The model for the current results
+   * @param fileToWrite
+   *          The file to write the result to
+   */
+  private void saveResultsAsTriples(TableModel model, File fileToWrite) {
+    String fileName;
+    FileReader testExist;
+    boolean okToWrite;
+
+    fileName = fileToWrite.getAbsolutePath();
+
+    okToWrite = false;
+
+    if (fileName == null || fileName.trim().length() == 0) {
+      userMessage(Resources.getString("errNoFileNameWriteText"),
+          Resources.getString("errNoFileNameWriteTitle"),
+          JOptionPane.ERROR_MESSAGE);
+    } else {
+      fileName = fileName.trim();
+      if (!fileName.toLowerCase().endsWith(".ttl") && !fileName.endsWith(".")) {
+        fileName += ".ttl";
+      }
+
+      try {
+        testExist = new FileReader(fileName);
+        testExist.close();
+        okToWrite = JOptionPane.showConfirmDialog(this,
+            Resources.getString("dlgVerifyOverwriteText", fileName),
+            Resources.getString("dlgVerifyOverwriteTitle"),
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+      } catch (FileNotFoundException fnf) {
+        okToWrite = true;
+      } catch (Exception any) {
+        LOGGER.error("Error preparing to save data", any);
+        messageOut(
+            Resources.getString("errFailDataSavePrep", any.getMessage()),
+            STYLE_RED);
+      }
+    }
+
+    if (okToWrite) {
+      exportFile = new File(fileName);
+      runType = RUNTYPE_TRIPLE_EXPORT;
+      new Thread(this).start();
+      // execute(getQuery().getSql(), new ListTableModel<Object>(), new File(
+      // fileName));
     }
   }
 
@@ -5465,8 +5644,9 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     } else {
       queryText.setText("");
     }
-    
-    setPrevNextIndication();    
+
+    setPrevNextIndication();
+    setExportAvailable(false);
   }
 
   /**
@@ -5484,6 +5664,12 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     try {
       if (runType == RUNTYPE_ALL) {
         runAllQueries();
+      } else if (runType == RUNTYPE_TRIPLE_EXPORT) {
+        message.setText("");
+        messageOut(Resources.getString("msgStartExportToFile",
+            exportFile.getAbsolutePath()), STYLE_BOLD);
+        messageOut("");
+        execute(getQuery().getSql(), new ListTableModel<Object>(), exportFile);
       } else {
         checkForNewString(querySelection);
         checkForNewString(connectString);
@@ -6043,7 +6229,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     slMessage += "David Read, DaveRead@aol.com, www.daveread.us\n\n";
 
-    slMessage += "Copyright (c) 2006\n\n"
+    slMessage += "Copyright (c) 2004-2014\n\n"
         + "This program is free software; you can redistribute it and/or modify "
         +
         "it under the terms of the GNU General Public License as published by "
@@ -6112,6 +6298,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     table.selectAll();
   }
 
+  private void setExportAvailable(boolean available) {
+    fileSaveAsCSV.setEnabled(available);
+    fileSaveAsTriples.setEnabled(available);
+  }
+
   /**
    * Copy the selected data cells to the clipboard
    */
@@ -6174,7 +6365,6 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     if (fontChooser.getNewFont() != null) {
       setupFont(fontChooser.getNewFont());
     }
-
   }
 
   /**
@@ -6330,7 +6520,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     } else if (source == fileOpenSQL) {
       openSQLFile();
     } else if (source == fileSaveAsCSV) {
-      chooseFileForSave(table.getModel());
+      chooseFileForSave(table.getModel(), FILE_EXPORT_CSV);
     } else if (source == queryMakeVerboseSelect) {
       makeVerboseSelect();
     } else if (source == queryRunAll) {
@@ -6364,6 +6554,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       changeLanguage();
     } else if (source == configFont) {
       chooseFont();
+    } else if (source == asDescribe || source == asQuery || source == asUpdate) {
+      setExportAvailable(false);
     }
   }
 
@@ -6462,6 +6654,38 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     if (o instanceof CheckLatestVersion) {
       notifyNewerVersion((NewVersionInformation) arg);
     }
+  }
+
+  /**
+   * Handle menu selection for exporting the results to triples
+   */
+  private class ExportResultsAsTriplesListener implements ActionListener {
+    /**
+     * No operation
+     */
+    public ExportResultsAsTriplesListener() {
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent arg0) {
+      chooseFileForSave(table.getModel(), FILE_EXPORT_TRIPLES);
+    }
+  }
+
+  @Override
+  public void keyPressed(KeyEvent arg0) {
+
+  }
+
+  @Override
+  public void keyReleased(KeyEvent arg0) {
+    setExportAvailable(false);
+  }
+
+  @Override
+  public void keyTyped(KeyEvent arg0) {
+
   }
 
   /**

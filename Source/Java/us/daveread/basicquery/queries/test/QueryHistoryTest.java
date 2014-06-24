@@ -41,13 +41,19 @@ public class QueryHistoryTest extends TestCase {
     QueryHistory.getInstance().clearAllQueries();
   }
 
+  /**
+   * Test adding a query
+   */
   public void testAddQuery() {
-    QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
+    final QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
     assertEquals("Incorrect number of history queries", 1, QueryHistory
         .getInstance().getNumberOfQueries());
   }
 
+  /**
+   * Test deleting the query based on the index position
+   */
   public void testDeleteQueryAtIndex() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -66,6 +72,9 @@ public class QueryHistoryTest extends TestCase {
         .getCurrentQueryInfo().getSQLIndex());
   }
 
+  /**
+   * Test getting the number of queries
+   */
   public void testGetNumberOfQueries() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -77,6 +86,9 @@ public class QueryHistoryTest extends TestCase {
         .getInstance().getNumberOfQueries());
   }
 
+  /**
+   * Test getting the current query's information
+   */
   public void testGetCurrentQueryInfo() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -91,6 +103,9 @@ public class QueryHistoryTest extends TestCase {
         .getInstance().getCurrentQueryInfo().getSQLIndex());
   }
 
+  /**
+   * Test moving backward in the history list
+   */
   public void testMoveBackward() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -108,6 +123,9 @@ public class QueryHistoryTest extends TestCase {
 
   }
 
+  /**
+   * Test moving forward in the history list
+   */
   public void testMoveForward() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -126,6 +144,9 @@ public class QueryHistoryTest extends TestCase {
         .getInstance().getCurrentQueryInfo().getSQLIndex());
   }
 
+  /**
+   * Test detecting whether there are earlier queries in the history list
+   */
   public void testHasPrevious() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -147,6 +168,9 @@ public class QueryHistoryTest extends TestCase {
         false, QueryHistory.getInstance().hasPrevious());
   }
 
+  /**
+   * Test detecting whether there are more queries in the history list
+   */
   public void testHasNext() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -166,6 +190,9 @@ public class QueryHistoryTest extends TestCase {
         QueryHistory.getInstance().hasNext());
   }
 
+  /**
+   * Test clearing the history list
+   */
   public void testClearAllQueries() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -182,6 +209,9 @@ public class QueryHistoryTest extends TestCase {
         .getInstance().getNumberOfQueries());
   }
 
+  /**
+   * Test the truncation of query history
+   */
   public void testTruncation() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -208,6 +238,9 @@ public class QueryHistoryTest extends TestCase {
         .getCurrentQueryInfo().getSQLIndex());
   }
 
+  /**
+   * Test inserting a duplicate query
+   */
   public void testInsertSameQuery() {
     QueryInfo queryInfo = new QueryInfo(0, 0, new DefaultTableModel());
     QueryHistory.getInstance().addQuery(queryInfo);
@@ -224,9 +257,12 @@ public class QueryHistoryTest extends TestCase {
         .getCurrentQueryInfo().getURLIndex());
   }
 
+  /**
+   * Test enforcing the history list max size
+   */
   public void testEnforceSize() {
     QueryInfo queryInfo = null;
-    
+
     for (int index = 0; index < 1000 + 2; ++index) {
       queryInfo = new QueryInfo(index, 0, new DefaultTableModel());
       QueryHistory.getInstance().addQuery(queryInfo);
@@ -237,31 +273,32 @@ public class QueryHistoryTest extends TestCase {
 
     while (QueryHistory.getInstance().hasPrevious()) {
       QueryHistory.getInstance().moveBackward();
-    }    
+    }
   }
-  
+
+  /**
+   * Test thrown exceptions
+   */
   public void testExceptions() {
     try {
       QueryHistory.getInstance().getCurrentQueryInfo();
       fail("Should have thrown an IllegalAccessError");
-    }
-    catch (IllegalAccessError iae) {
+    } catch (IllegalAccessError iae) {
       assertTrue("Incorrect message", iae.getMessage().startsWith("No queries"));
     }
-    
+
     try {
       QueryHistory.getInstance().moveBackward();
       fail("Should have thrown an IllegalAccessError");
+    } catch (IllegalAccessError iae) {
+      assertTrue("Incorrect message", iae.getMessage()
+          .startsWith("No previous"));
     }
-    catch (IllegalAccessError iae) {
-      assertTrue("Incorrect message", iae.getMessage().startsWith("No previous"));
-    }
-    
+
     try {
       QueryHistory.getInstance().moveForward();
       fail("Should have thrown an IllegalAccessError");
-    }
-    catch (IllegalAccessError iae) {
+    } catch (IllegalAccessError iae) {
       assertTrue("Incorrect message", iae.getMessage().startsWith("No more"));
     }
   }
