@@ -45,7 +45,6 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.mindswap.pellet.jena.PelletReasonerFactory;
 
-import com.hp.hpl.jena.datatypes.RDFDatatype;
 import com.hp.hpl.jena.datatypes.xsd.XSDDatatype;
 import com.hp.hpl.jena.ontology.OntModel;
 import com.hp.hpl.jena.ontology.OntModelSpec;
@@ -53,9 +52,7 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.rdf.model.Property;
 import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
 import com.hp.hpl.jena.reasoner.Reasoner;
-import com.hp.hpl.jena.util.URIref;
 
 /**
  * Export a SQL ResultSet to triples
@@ -188,6 +185,8 @@ public class RdbToRdf implements Runnable {
    * 
    * @param pOutputFileName
    *          The name (and optional path) for the output
+   * @param pQuery
+   *          The query associated with the result set
    * @param pResultSet
    *          The database result set to export
    */
@@ -293,13 +292,14 @@ public class RdbToRdf implements Runnable {
       }
 
       // Define a base URI
-      ontModel.setNsPrefix("", namespace + "/base" + "#");
+      // TODO Make this an option to enable/disable
+      // ontModel.setNsPrefix("", namespace + "/base" + "#");
 
       // Define this as an ontology
       // TODO Make this an option to enable/disable
-//      ontModel.createOntology(URIref.encode(getOutputFileName().replaceAll("\\\\", "/")));
+      // ontModel.createOntology(URIref.encode(getOutputFileName().replaceAll("\\\\",
+      // "/")));
 
-      
       namespace += "#";
 
       // Prefixes

@@ -162,7 +162,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "02.00.02";
+  private static final String VERSION = "02.00.03";
 
   /**
    * Logger
@@ -3856,7 +3856,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         rows = stmt.getUpdateCount();
       }
 
-      messageOut("\n" + Resources.getString("msgRows") + " ", STYLE_NORMAL, false);
+      messageOut("\n" + Resources.getString("msgRows") + " ", STYLE_NORMAL,
+          false);
       if (rows == stmt.getMaxRows() && rows > 0) {
         messageOut("" + rows, STYLE_YELLOW);
       } else {
@@ -6298,6 +6299,12 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     table.selectAll();
   }
 
+  /**
+   * Enable or disable the export menu items based on the latest query
+   * 
+   * @param available
+   *          Whether the export options should be enabled
+   */
   private void setExportAvailable(boolean available) {
     fileSaveAsCSV.setEnabled(available);
     fileSaveAsTriples.setEnabled(available);
