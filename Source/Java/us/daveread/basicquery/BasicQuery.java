@@ -80,6 +80,7 @@ import javax.swing.ProgressMonitor;
 import javax.swing.TransferHandler;
 import javax.swing.WindowConstants;
 import javax.swing.border.Border;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.TableModel;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -107,10 +108,12 @@ import us.daveread.basicquery.queries.QueryHistory;
 import us.daveread.basicquery.queries.QueryInfo;
 import us.daveread.basicquery.util.CheckLatestVersion;
 import us.daveread.basicquery.util.Configuration;
+import us.daveread.basicquery.util.FileFilterDefinition;
 import us.daveread.basicquery.util.ListTableModel;
 import us.daveread.basicquery.util.NewVersionInformation;
 import us.daveread.basicquery.util.RdbToRdf;
 import us.daveread.basicquery.util.Resources;
+import us.daveread.basicquery.util.SuffixFileFilter;
 import us.daveread.basicquery.util.TableSorter;
 import us.daveread.basicquery.util.Utility;
 
@@ -162,15 +165,12 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "02.00.03";
+  private static final String VERSION = "02.00.04";
 
   /**
    * Logger
    */
   private static final Logger LOGGER = Logger.getLogger(BasicQuery.class);
-
-  // private final static String FILENAME_PROPERTIES =
-  // "BasicQuery.Properties.txt";
 
   /**
    * Database drivers file
@@ -821,6 +821,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * Filename for current set of queries
    */
   private String queryFilename;
+
+  /**
+   * The query file filter description last used by the user
+   */
+  private String latestChosenQueryFileFilterDescription;
 
   /**
    * SQL input text area
@@ -5864,6 +5869,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    */
   private void openSQLFile() {
     JFileChooser fileMenu;
+    FileFilter defaultFileFilter = null;
+    FileFilter preferredFileFilter = null;
     File chosenSQLFile;
     int returnVal;
 
@@ -5874,6 +5881,31 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     // Allow user to choose/create new file for SQL Statements
     fileMenu = new JFileChooser(new File(queryFilename));
+
+    for (FileFilterDefinition filterDefinition : FileFilterDefinition.values()) {
+      if (filterDefinition.name().startsWith("QUERY")) {
+        final FileFilter fileFilter = new SuffixFileFilter(
+            filterDefinition.description(), filterDefinition.acceptedSuffixes());
+        if (filterDefinition.isPreferredOption()) {
+          preferredFileFilter = fileFilter;
+        }
+        fileMenu.addChoosableFileFilter(fileFilter);
+        if (filterDefinition.description().equals(
+            latestChosenQueryFileFilterDescription)) {
+          defaultFileFilter = fileFilter;
+        }
+      }
+    }
+
+    if (defaultFileFilter != null) {
+      fileMenu.setFileFilter(defaultFileFilter);
+    } else if (latestChosenQueryFileFilterDescription != null
+        && latestChosenQueryFileFilterDescription.startsWith("All")) {
+      fileMenu.setFileFilter(fileMenu.getAcceptAllFileFilter());
+    } else if (preferredFileFilter != null) {
+      fileMenu.setFileFilter(preferredFileFilter);
+    }
+
     fileMenu.setSelectedFile(new File(queryFilename));
     fileMenu.setDialogTitle(Resources.getString("dlgSQLFileTitle"));
     fileMenu.setDialogType(JFileChooser.OPEN_DIALOG);
@@ -5914,6 +5946,14 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         // Update GUI
         setPrevNextIndication();
       }
+    }
+
+    try {
+      latestChosenQueryFileFilterDescription = fileMenu.getFileFilter()
+          .getDescription();
+    } catch (Throwable throwable) {
+      LOGGER.warn("Unable to determine which ontology file filter was chosen",
+          throwable);
     }
 
     if (chosenSQLFile != null) {
