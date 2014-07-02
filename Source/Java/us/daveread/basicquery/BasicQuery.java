@@ -165,7 +165,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "02.00.04";
+  private static final String VERSION = "02.00.05";
 
   /**
    * Logger
@@ -3802,7 +3802,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
                 value = colName;
                 break;
               case DESC_TABLE_TYPE_COLUMN: // Type
-                value = meta.getColumnTypeName(col + 1);
+                value = meta.getColumnTypeName(col + 1) + " (" + meta.getColumnType(col + 1) + ")";
                 break;
               case DESC_TABLE_LENGTH_COLUMN: // Length
                 value = new Integer(meta.getColumnDisplaySize(col + 1));
@@ -5914,11 +5914,15 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     if (fileMenu.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       chosenSQLFile = fileMenu.getSelectedFile();
-      // if (!chosenSQLFile.getName().toLowerCase().endsWith(".txt")) {
-      // chosenSQLFile = new File(chosenSQLFile.getAbsolutePath() +
-      // ".txt");
-      // }
-
+      
+      // Adjust file suffix if necessary
+      final FileFilter fileFilter = fileMenu.getFileFilter();
+      if (fileFilter != null && fileFilter instanceof SuffixFileFilter
+          && !fileMenu.getFileFilter().accept(chosenSQLFile)) {
+        chosenSQLFile = ((SuffixFileFilter) fileFilter)
+            .makeWithPrimarySuffix(chosenSQLFile);
+      }
+      
       if (!chosenSQLFile.exists()) {
         returnVal = JOptionPane.showConfirmDialog(this,
             Resources.getString("dlgNewSQLFileText", chosenSQLFile.getName()),
@@ -6268,7 +6272,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         + " and memory usage information to assist in"
         + " performance tuning of database interactions.\n\n";
 
-    slMessage += "David Read, DaveRead@aol.com, www.daveread.us\n\n";
+    slMessage += "David Read, www.monead.com\n\n";
 
     slMessage += "Copyright (c) 2004-2014\n\n"
         + "This program is free software; you can redistribute it and/or modify "
