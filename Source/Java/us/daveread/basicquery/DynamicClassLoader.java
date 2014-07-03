@@ -87,9 +87,9 @@ public class DynamicClassLoader extends ClassLoader {
     for (int a = 0; a < archives.size(); ++a) {
       try {
         fileName = (archives.get(a)).getCanonicalPath();
-        if (fileName.indexOf(":") > 0) {
-          fileName = fileName.substring(fileName.indexOf(":") + 1);
-        }
+        //if (fileName.indexOf(":") > 0) {
+        //  fileName = fileName.substring(fileName.indexOf(":") + 1);
+        //}
         fileName = fileName.replace('\\', '/');
 
         LOGGER.info("Add to classpath " + fileName);

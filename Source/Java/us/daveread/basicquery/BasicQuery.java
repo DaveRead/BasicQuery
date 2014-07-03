@@ -165,7 +165,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "02.00.05";
+  private static final String VERSION = "02.00.06";
 
   /**
    * Logger
