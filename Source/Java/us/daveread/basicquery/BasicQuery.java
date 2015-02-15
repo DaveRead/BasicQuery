@@ -125,7 +125,7 @@ import us.daveread.basicquery.util.Utility;
  * </p>
  * 
  * <p>
- * Copyright: Copyright (c) 2004-2014, David Read
+ * Copyright: Copyright (c) 2004-2015, David Read
  * </p>
  * 
  * <p>
@@ -165,7 +165,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "02.00.06";
+  private static final String VERSION = "02.00.07";
 
   /**
    * Logger
@@ -943,6 +943,10 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    */
   private JCheckBoxMenuItem fileNoCRAddedToExportRows;
 
+  /**
+   * Menu item - exit the program
+   */
+  private JMenuItem fileExit;
   /**
    * Menu item - sort by selected column(s)
    */
@@ -2294,6 +2298,19 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     fileNoCRAddedToExportRows.setEnabled(true);
     fileNoCRAddedToExportRows.setSelected(false);
     menu.add(fileNoCRAddedToExportRows);
+
+    menu.addSeparator();
+
+    fileExit = new JMenuItem(Resources.getString("mnuFileExitLabel"));
+    fileExit.setAccelerator(KeyStroke.getKeyStroke(Resources.getChar(
+        "mnuFileExitAccel"),
+        ActionEvent.ALT_MASK));
+    fileExit.setMnemonic(Resources.getChar("mnuFileExitAccel"));
+    fileExit.getAccessibleContext().setAccessibleDescription(Resources.
+        getString("mnuFileExitDesc"));
+    fileExit.addActionListener(this);
+    fileExit.setEnabled(true);
+    menu.add(fileExit);
 
     return menu;
   }
@@ -3802,7 +3819,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
                 value = colName;
                 break;
               case DESC_TABLE_TYPE_COLUMN: // Type
-                value = meta.getColumnTypeName(col + 1) + " (" + meta.getColumnType(col + 1) + ")";
+                value = meta.getColumnTypeName(col + 1) + " ("
+                    + meta.getColumnType(col + 1) + ")";
                 break;
               case DESC_TABLE_LENGTH_COLUMN: // Length
                 value = new Integer(meta.getColumnDisplaySize(col + 1));
@@ -5914,7 +5932,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     if (fileMenu.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
       chosenSQLFile = fileMenu.getSelectedFile();
-      
+
       // Adjust file suffix if necessary
       final FileFilter fileFilter = fileMenu.getFileFilter();
       if (fileFilter != null && fileFilter instanceof SuffixFileFilter
@@ -5922,7 +5940,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         chosenSQLFile = ((SuffixFileFilter) fileFilter)
             .makeWithPrimarySuffix(chosenSQLFile);
       }
-      
+
       if (!chosenSQLFile.exists()) {
         returnVal = JOptionPane.showConfirmDialog(this,
             Resources.getString("dlgNewSQLFileText", chosenSQLFile.getName()),
@@ -6532,6 +6550,23 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     }
   }
 
+  /**
+   * Exit the program. Writes out the current configuration before exiting.
+   */
+  private void exitProgram() {
+    saveConfig();
+    cleanUp();
+    try {
+      dispose();
+    } catch (Throwable any) {
+      // This fails periodically with a NP exception
+      // from Container.removeNotify
+      LOGGER.warn("Error during application shutdown", any);
+    }
+
+    System.exit(0);
+  }
+
   // Begin ActionListener Interface
 
   /**
@@ -6558,6 +6593,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       setupSelectedQuery();
     } else if (source == fileSaveBLOBs) {
       saveBLOBs();
+    } else if (source == fileExit) {
+      exitProgram();
     } else if (source == querySelectStar) {
       queryStar(Query.MODE_QUERY);
     } else if (source == queryDescribeStar) {
@@ -6642,17 +6679,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    *          The event that specifies the closing of the window
    */
   public void windowClosing(WindowEvent evt) {
-    saveConfig();
-    cleanUp();
-    try {
-      dispose();
-    } catch (Throwable any) {
-      // This fails periodically with a NP exception
-      // from Container.removeNotify
-      LOGGER.warn("Error during application shutdown", any);
-    }
-
-    System.exit(0);
+    exitProgram();
   }
 
   /**

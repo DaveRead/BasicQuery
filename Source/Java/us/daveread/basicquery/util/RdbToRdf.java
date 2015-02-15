@@ -534,12 +534,14 @@ public class RdbToRdf implements Runnable {
 
     out = null;
 
-    LOGGER.info("Write loaded data to file, " + outputFileName
+    LOGGER.info("Begin writing loaded data to file, " + outputFileName
         + ", in format: " + outputFormat);
 
     try {
       out = new FileWriter(outputFileName, false);
       ontModel.write(out, outputFormat);
+      LOGGER.info("Completed writing loaded data to file, " + outputFileName
+          + ", in format: " + outputFormat);
     } catch (IOException ioExc) {
       LOGGER.error("Unable to write to file: " + outputFileName, ioExc);
       throw new RuntimeException("unable to write output file ("
