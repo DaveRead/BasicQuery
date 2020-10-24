@@ -125,7 +125,7 @@ import us.daveread.basicquery.util.Utility;
  * </p>
  * 
  * <p>
- * Copyright: Copyright (c) 2004-2015, David Read
+ * Copyright: Copyright (c) 2004-2020, David Read
  * </p>
  * 
  * <p>
@@ -165,7 +165,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "02.00.07";
+  private static final String VERSION = "02.01.00";
 
   /**
    * Logger
@@ -3553,12 +3553,15 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
           messageOut(Resources.getString("msgPoolNone"));
         }
       }
-      if (getDBPool() == null || /* conn == null */
-      !((String) connectString.getEditor().getItem()).equals(
+      if ((poolConnect.isSelected() && getDBPool() == null) || 
+          /* conn == null */
+          !((String) connectString.getEditor().getItem()).equals(
           lastConnection) || !userId.getText().equals(lastUserId)
           || !new String(password.getPassword()).equals(lastPassword)) {
 
-        removeDBPool();
+        if (poolConnect.isSelected()) {
+          removeDBPool();
+        }
 
         lastConnection = (String) connectString.getEditor().getItem();
         lastUserId = userId.getText();
@@ -3592,6 +3595,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
       conn.setAutoCommit(autoCommit.isSelected());
       conn.setReadOnly(readOnly.isSelected());
+      
+      reportConnectionStats(conn);
 
       if (!hasParams) {
         stmt = conn.createStatement();
@@ -4009,7 +4014,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * @param pConn
    *          Connection The DB connection
    */
-  @SuppressWarnings("unused")
+//  @SuppressWarnings("unused")
   private void reportConnectionStats(Connection pConn) {
     Class<?> connectionClass;
     Method[] allMethods;
@@ -4064,7 +4069,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
               }
               // Call the method
-              returnValue = allMethods[i].invoke(dbMeta, (Object) null);
+              returnValue = allMethods[i].invoke(dbMeta);
 
               // Check if the returned value is an array
               if (!returnValue.getClass().isArray()) {
