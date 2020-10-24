@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverPropertyInfo;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * <p>Title: Dynamic driver</p>
@@ -70,5 +72,10 @@ public class DynamicDriver implements Driver {
   @Override
   public boolean jdbcCompliant() {
     return driver.jdbcCompliant();
+  }
+
+  @Override
+  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    return driver.getParentLogger();
   }
 }

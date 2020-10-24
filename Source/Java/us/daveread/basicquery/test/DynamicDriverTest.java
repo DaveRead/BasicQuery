@@ -4,7 +4,9 @@ import java.sql.Driver;
 
 import us.daveread.basicquery.DynamicDriver;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.sql.SQLException;
+import java.sql.SQLFeatureNotSupportedException;
 import java.sql.DriverPropertyInfo;
 import java.sql.Connection;
 
@@ -183,5 +185,14 @@ public class DynamicDriverTest extends TestCase implements Driver {
    */
   public int getMinorVersion() {
     return 0;
+  }
+
+  /**
+   * Return null for the logger.
+   * 
+   * @return Null is always returned
+   */
+  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    return null;
   }
 }
