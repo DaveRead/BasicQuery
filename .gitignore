@@ -1,0 +1,9 @@
+/bin
+/DBDrivers
+/dist
+.classpath
+.project
+.settings
+BasicQuery.SQL
+BasicQuery.Stat*
+BasicQuery.log
