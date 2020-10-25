@@ -282,7 +282,7 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
     final boolean ital = StyleConstants.isItalic(attributes);
     final int size = StyleConstants.getFontSize(attributes);
 
-    // Bold and italic don’t work properly in beta 4.
+    // Bold and italic don't work properly in beta 4.
     newFont = new Font(name, (bold ? Font.BOLD : 0)
         + (ital ? Font.ITALIC : 0), size);
     previewLabel.setFont(newFont);
