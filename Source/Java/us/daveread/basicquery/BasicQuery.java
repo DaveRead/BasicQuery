@@ -25,6 +25,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Array;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -409,6 +411,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * Bold text style
    */
   private static final String STYLE_BOLD = "Bold";
+
+  /**
+   * Bold and underlined text style
+   */
+  private static final String STYLE_BOLD_UL = "BoldUL";
 
   /**
    * Green text
@@ -1692,6 +1699,9 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     messageStyles.put(STYLE_BOLD,
         MessageStyleFactory.instance().createStyle(Color.black,
             MessageStyleFactory.BOLD));
+    messageStyles.put(STYLE_BOLD_UL,
+        MessageStyleFactory.instance().createStyle(Color.black,
+            MessageStyleFactory.BOLD | MessageStyleFactory.UNDERLINE));
     messageStyles.put(STYLE_GREEN,
         MessageStyleFactory.instance().createStyle(Color.green,
             MessageStyleFactory.BOLD));
@@ -4600,8 +4610,21 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       runStats += " " + Resources.getString("proProcessors",
           runtime.availableProcessors() + "");
 
-      messageOut(Resources.getString("proClientEnv") + " ", STYLE_SUBTLE, false);
+      messageOut("");
+      messageOut(Resources.getString("proClientEnv") + " ", STYLE_BOLD_UL);
       messageOut(runStats);
+      
+      // TODO show VM info with correct resources for labeling
+      RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
+      messageOut("JVM: " + runtimeBean.getName(), STYLE_SUBTLE);
+      messageOut("Spec Name: " + runtimeBean.getSpecName(), STYLE_SUBTLE);
+      messageOut("Spec Vendor: " + runtimeBean.getSpecVendor(), STYLE_SUBTLE);
+      messageOut("Spec Version: " + runtimeBean.getSpecVersion(), STYLE_SUBTLE);
+      messageOut("VM Name: " + runtimeBean.getVmName(), STYLE_SUBTLE);
+      messageOut("VM Vendor: " + runtimeBean.getVmVendor(), STYLE_SUBTLE);
+      messageOut("VM Version: " + runtimeBean.getVmVersion(), STYLE_SUBTLE);
+      messageOut("Classpath: " + runtimeBean.getClassPath(), STYLE_SUBTLE);
+      messageOut("");
     }
 
     if (poolConnect.isSelected()) {
