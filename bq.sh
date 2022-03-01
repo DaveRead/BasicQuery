@@ -1,1 +1,1 @@
-java -cp dist/BasicQuery.jar:ThirdPartyLibs/commons-collections-3.1.jar:ThirdPartyLibs/commons-pool-1.3.jar:ThirdPartyLibs/commons-dbcp-1.2.1.jar:ThirdPartyLibs/log4j-1.2.9.jar:AddlClasses us.daveread.basicquery.BasicQuery
+java -cp dist/BasicQuery.jar:ThirdPartyLibs/commons-collections-3.1.jar:ThirdPartyLibs/commons-pool-1.3.jar:ThirdPartyLibs/commons-dbcp-1.2.1.jar:ThirdPartyLibs/log4j-1.2.13.jar:AddlClasses us.daveread.basicquery.BasicQuery
