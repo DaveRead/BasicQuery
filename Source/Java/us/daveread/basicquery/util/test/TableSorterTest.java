@@ -95,19 +95,19 @@ public class TableSorterTest extends TestCase {
   private Object[][] dataNumeric = {
       // Numbers
       {
-          new Integer(1), new Integer(2), new Integer(3)
+          1, 2, 3
       },
       {
-          new Integer(11), new Integer(2), new Integer(-3)
+          11, 2, -3
       },
       {
-          new Integer(15), new Integer(20), new Integer(30)
+          15, 20, 30
       },
       {
-          new Integer(15), new Integer(20), new Integer(30)
+          15, 20, 30
       },
       {
-          new Integer(-11), new Integer(-2), new Integer(-43)
+          -11, -2, -43
       },
       {
           null, null, null
@@ -148,19 +148,19 @@ public class TableSorterTest extends TestCase {
   private Object[][] dataBooleans = {
       // Boolean
       {
-          new Boolean(false), new Boolean(true), new Boolean(false)
+          false, true, false
       },
       {
           null, null, null
       },
       {
-          new Boolean(true), new Boolean(true), new Boolean(false)
+          true, true, false
       },
       {
-          new Boolean(true), new Boolean(true), new Boolean(true)
+          true, true, true
       },
       {
-          new Boolean(false), new Boolean(true), new Boolean(false)
+          false, true, false
       }
   };
 
@@ -315,8 +315,8 @@ public class TableSorterTest extends TestCase {
     sorter = new TableSorter();
     sorter.setModel(model2);
 
-    assertEquals(new Integer(3), sorter.getValueAt(0, 2));
-    assertEquals(new Integer(-3), sorter.getValueAt(1, 2));
+    assertEquals(3, sorter.getValueAt(0, 2));
+    assertEquals(-3, sorter.getValueAt(1, 2));
 
     columns = new int[2];
     columns[0] = 2;
@@ -324,7 +324,7 @@ public class TableSorterTest extends TestCase {
     sorter.sortByColumns(columns);
 
     assertNull(sorter.getValueAt(0, 2));
-    assertEquals(new Integer(-43), sorter.getValueAt(1, 2));
+    assertEquals(-43, sorter.getValueAt(1, 2));
 
     // Dates
     model2 = new DefaultTableModel(dataDates, colNames);
@@ -347,7 +347,7 @@ public class TableSorterTest extends TestCase {
     sorter = new TableSorter();
     sorter.setModel(model2);
 
-    assertEquals(new Boolean(false), sorter.getValueAt(0, 0));
+    assertEquals(false, sorter.getValueAt(0, 0));
     assertNull(sorter.getValueAt(1, 0));
 
     columns = new int[2];
@@ -356,7 +356,7 @@ public class TableSorterTest extends TestCase {
     sorter.sortByColumns(columns);
 
     assertNull(sorter.getValueAt(0, 0));
-    assertEquals(new Boolean(false), sorter.getValueAt(1, 0));
+    assertEquals(false, sorter.getValueAt(1, 0));
 
     // Objects
     model2 = new DefaultTableModel(dataObjects, colNames);

@@ -14,6 +14,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,8 +48,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.Properties;
 import java.util.Set;
 
@@ -157,7 +157,7 @@ import us.daveread.basicquery.util.Utility;
  */
 
 public class BasicQuery extends JFrame implements Runnable, ActionListener,
-    WindowListener, Observer, KeyListener {
+    WindowListener, PropertyChangeListener, KeyListener {
 
   /**
    * Serial version id - update if the serialization of this classes changes
@@ -167,7 +167,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Program version - MUST be in ##.##.## format
    */
-  private static final String VERSION = "02.01.00";
+  private static final String VERSION = "03.00.00";
 
   /**
    * Logger
@@ -342,8 +342,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Property name - display column type setting
    */
-  private static final String PROP_DISPLAYCOLUMNDATATYPE =
-      "DISPLAYCOLUMNDATATYPE";
+  private static final String PROP_DISPLAYCOLUMNDATATYPE = "DISPLAYCOLUMNDATATYPE";
 
   /**
    * Property name - row coloring setting
@@ -393,14 +392,12 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Default update warning statement keywords
    */
-  private static final String DEFAULTWARNUPDATEPATTERNS =
-      "SELECT,SHOW,DESCRIBE,DESC";
+  private static final String DEFAULTWARNUPDATEPATTERNS = "SELECT,SHOW,DESCRIBE,DESC";
 
   /**
    * Default select warning statement keywords
    */
-  private static final String DEFAULTWARNSELECTPATTERNS =
-      "INSERT,UPDATE,DELETE,ALTER,DROP,CREATE";
+  private static final String DEFAULTWARNSELECTPATTERNS = "INSERT,UPDATE,DELETE,ALTER,DROP,CREATE";
 
   /**
    * Normal text style
@@ -822,7 +819,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Set of defined queries
    */
-  private JComboBox querySelection;
+  private JComboBox<Query> querySelection;
 
   /**
    * Filename for current set of queries
@@ -842,7 +839,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Set of defined connection strings
    */
-  private JComboBox connectString;
+  private JComboBox<String> connectString;
 
   /**
    * User Id to authenticate with the DB server
@@ -867,7 +864,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   /**
    * Selection for maximum number of rows to retrieve and display
    */
-  private JComboBox maxRows;
+  private JComboBox<String> maxRows;
 
   /**
    * Buttons to move through history of executed queries
@@ -1367,26 +1364,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     table.getTableHeader().setToolTipText(Resources.getString(
         "tipClickHeaderToSort"));
 
-    maxRows = new JComboBox();
+    String[] rowOptions = { Resources.getString("proNoLimit"), "50", "100",
+        "500", "1000", "5000", "10000", "20000", "30000", "50000", "100000",
+        "200000", "500000", "1000000", "1500000", "2000000", "3000000" };
+    maxRows = new JComboBox<>(rowOptions);
     maxRows.setEditable(false);
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement(Resources.getString(
-        "proNoLimit"));
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("50");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("100");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("500");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("1000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("5000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("10000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("20000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("30000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("50000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("100000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("200000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("500000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("1000000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("1500000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("2000000");
-    ((DefaultComboBoxModel) maxRows.getModel()).addElement("3000000");
     maxRows.setSelectedItem("100");
 
   }
@@ -1421,9 +1403,9 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     gridPanel = new JPanel();
     gridPanel.setLayout(new GridLayout(0, 1));
 
-    gridPanel.add(connectString = new JComboBox());
+    gridPanel.add(connectString = new JComboBox<>());
     connectString.setEditable(true);
-    gridPanel.add(querySelection = new JComboBox());
+    gridPanel.add(querySelection = new JComboBox<>());
     querySelection.setEditable(false);
     querySelection.addActionListener(this);
     outerPanel.add(gridPanel, BorderLayout.NORTH);
@@ -1457,14 +1439,13 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     boxedPanel = new JPanel();
     boxedPanel.setLayout(new FlowLayout());
     boxedPanel.add(previousQuery = new JButton(Resources.getString("ctlPrev"),
-        new ImageIcon(ImageUtility.
-            getImageAsByteArray("ArrowLeftGreen.gif"))));
+        new ImageIcon(ImageUtility.getImageAsByteArray("ArrowLeftGreen.gif"))));
     previousQuery.setToolTipText(
         Resources.getString("tipPrev"));
     previousQuery.addActionListener(this);
     boxedPanel.add(nextQuery = new JButton(Resources.getString("ctlNext"),
-        new ImageIcon(ImageUtility.
-            getImageAsByteArray("ArrowRightGreen.gif"))));
+        new ImageIcon(
+            ImageUtility.getImageAsByteArray("ArrowRightGreen.gif"))));
     nextQuery.setToolTipText(Resources.getString("tipNext"));
     nextQuery.addActionListener(this);
     flowPanel.add(boxedPanel);
@@ -1629,7 +1610,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
           LOGGER.debug("User def color count=" + colors.length);
           if (colors.length == USER_DEFINED_COLORING_COLORS_PER_ENTRY
               && colors[0].length() == USER_DEFINED_COLORING_COLOR_CODE_LENGTH
-              && colors[1].length() == USER_DEFINED_COLORING_COLOR_CODE_LENGTH) {
+              && colors[1]
+                  .length() == USER_DEFINED_COLORING_COLOR_CODE_LENGTH) {
             addDisplayRowColor(colors[0], colors[1]);
             configTableColoringUserDefined.setEnabled(true);
           } else {
@@ -1661,25 +1643,28 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       cellRenderer.addAlternatingRowColor(
           new Color(Integer.parseInt(
               foregroundColor.substring(COLOR_CODING_COLOR_1_START,
-                  COLOR_CODING_COLOR_2_START), COLOR_CODING_NUMERIC_BASE),
+                  COLOR_CODING_COLOR_2_START),
+              COLOR_CODING_NUMERIC_BASE),
               Integer.parseInt(
-                  foregroundColor.
-                      substring(COLOR_CODING_COLOR_2_START,
-                          COLOR_CODING_COLOR_3_START),
+                  foregroundColor.substring(COLOR_CODING_COLOR_2_START,
+                      COLOR_CODING_COLOR_3_START),
                   COLOR_CODING_NUMERIC_BASE),
               Integer.parseInt(
                   foregroundColor.substring(COLOR_CODING_COLOR_3_START,
-                      COLOR_CODING_COLOR_3_END), COLOR_CODING_NUMERIC_BASE)),
+                      COLOR_CODING_COLOR_3_END),
+                  COLOR_CODING_NUMERIC_BASE)),
           new Color(Integer.parseInt(
               backgroundColor.substring(COLOR_CODING_COLOR_1_START,
-                  COLOR_CODING_COLOR_2_START), COLOR_CODING_NUMERIC_BASE),
-              Integer.parseInt(backgroundColor.
-                  substring(COLOR_CODING_COLOR_2_START,
-                      COLOR_CODING_COLOR_3_START), COLOR_CODING_NUMERIC_BASE),
+                  COLOR_CODING_COLOR_2_START),
+              COLOR_CODING_NUMERIC_BASE),
+              Integer
+                  .parseInt(
+                      backgroundColor.substring(COLOR_CODING_COLOR_2_START,
+                          COLOR_CODING_COLOR_3_START),
+                      COLOR_CODING_NUMERIC_BASE),
               Integer.parseInt(backgroundColor.substring(
                   COLOR_CODING_COLOR_3_START, COLOR_CODING_COLOR_3_END),
-                  COLOR_CODING_NUMERIC_BASE))
-          );
+                  COLOR_CODING_NUMERIC_BASE)));
     } catch (Throwable any) {
       // Probably a bad hex value
       LOGGER.warn("Error setting row coloring for FG(" + foregroundColor
@@ -1711,13 +1696,12 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         MessageStyleFactory.instance().createStyle(Color.red,
             MessageStyleFactory.BOLD));
     messageStyles.put(STYLE_SUBTLE,
-        MessageStyleFactory.instance().createStyle(Color.blue.
-            brighter(), MessageStyleFactory.ITALIC));
+        MessageStyleFactory.instance().createStyle(Color.blue.brighter(),
+            MessageStyleFactory.ITALIC));
     messageStyles.put(STYLE_SUBTLE_UL,
-        MessageStyleFactory.instance().
-            createStyle(Color.blue.brighter(),
-                MessageStyleFactory.ITALIC
-                    | MessageStyleFactory.UNDERLINE));
+        MessageStyleFactory.instance().createStyle(Color.blue.brighter(),
+            MessageStyleFactory.ITALIC
+                | MessageStyleFactory.UNDERLINE));
     messageStyles.put(STYLE_YELLOW,
         MessageStyleFactory.instance().createStyle(Color.black,
             Color.yellow, MessageStyleFactory.BOLD));
@@ -1797,12 +1781,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         .setProperty(
             PROP_TABLE_COLORING,
             configTableColoringGreenBar.isSelected() ? TABLECOLORING_GREENBAR
-                :
-                configTableColoringYellowBar.isSelected() ? TABLECOLORING_YELLOWBAR
-                    :
-                    configTableColoringUserDefined.isSelected() ? TABLECOLORING_USERDEFINED
-                        :
-                        TABLECOLORING_NONE);
+                : configTableColoringYellowBar.isSelected()
+                    ? TABLECOLORING_YELLOWBAR
+                    : configTableColoringUserDefined.isSelected()
+                        ? TABLECOLORING_USERDEFINED
+                        : TABLECOLORING_NONE);
 
     if (userDefTableColoring != null) {
       props.setProperty(PROP_TABLE_COLOR_USERDEF, userDefTableColoring);
@@ -1813,20 +1796,15 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         .setProperty(
             PROP_LANGUAGE,
             configLanguageDefault.isSelected() ? LANG_DEFAULT
-                :
-                configLanguageEnglish.isSelected() ? LANG_ENGLISH
-                    :
-                    configLanguageFrench.isSelected() ? LANG_FRENCH
-                        :
-                        configLanguageGerman.isSelected() ? LANG_GERMAN
-                            :
-                            configLanguageItalian.isSelected() ? LANG_ITALIAN
-                                :
-                                configLanguagePortuguese.isSelected() ? LANG_PORTUGUESE
-                                    :
-                                    configLanguageSpanish.isSelected() ? LANG_SPANISH
-                                        :
-                                        LANG_DEFAULT);
+                : configLanguageEnglish.isSelected() ? LANG_ENGLISH
+                    : configLanguageFrench.isSelected() ? LANG_FRENCH
+                        : configLanguageGerman.isSelected() ? LANG_GERMAN
+                            : configLanguageItalian.isSelected() ? LANG_ITALIAN
+                                : configLanguagePortuguese.isSelected()
+                                    ? LANG_PORTUGUESE
+                                    : configLanguageSpanish.isSelected()
+                                        ? LANG_SPANISH
+                                        : LANG_DEFAULT);
 
     // Font
     props.setProperty(PROP_FONT_FAMILY, getFont().getFamily());
@@ -1869,15 +1847,16 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       autoCommit.setSelected(false);
     }
 
-    if (props.getProperty(PROP_READONLY, PARAMVALUE_NO).equals(PARAMVALUE_YES)) {
+    if (props.getProperty(PROP_READONLY, PARAMVALUE_NO)
+        .equals(PARAMVALUE_YES)) {
       readOnly.setSelected(true);
     } else {
       readOnly.setSelected(false);
     }
 
     setQueryFilename(props.getProperty(PROP_SQLFILENAME,
-        Configuration.instance().getFile(FILENAME_DEFAULTQUERIES).
-            getAbsolutePath()));
+        Configuration.instance().getFile(FILENAME_DEFAULTQUERIES)
+            .getAbsolutePath()));
     fileLogStats.setSelected(props.getProperty(PROP_LOGSTATS,
         PARAMVALUE_NO).equals(PARAMVALUE_YES));
     fileLogResults.setSelected(props.getProperty(PROP_LOGRESULTS,
@@ -1887,8 +1866,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     fileNoCRAddedToExportRows.setSelected(props.getProperty(PROP_EXPORTNOCR,
         PARAMVALUE_NO).equals(PARAMVALUE_YES));
     configSavePassword.setSelected(props.getProperty(PROP_SAVEPASSWORD,
-        PARAMVALUE_NO).
-        equals(PARAMVALUE_YES));
+        PARAMVALUE_NO).equals(PARAMVALUE_YES));
     configHistoryAssocSQLAndConnect.setSelected(props.getProperty(
         PROP_ASSOCSQLURL, PARAMVALUE_NO).equals(PARAMVALUE_YES));
     configParseSemicolons.setSelected(props.getProperty(PROP_PARSESEMICOLON,
@@ -1945,7 +1923,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // Frame's window state (maximized/normal)
     setExtendedState(props.getProperty(PROP_MAXIMIZED,
         PARAMVALUE_NO).equals(PARAMVALUE_YES)
-        ? JFrame.MAXIMIZED_BOTH : JFrame.NORMAL);
+            ? JFrame.MAXIMIZED_BOTH
+            : JFrame.NORMAL);
 
     if (!props.getProperty(PROP_MAXIMIZED, PARAMVALUE_NO)
         .equals(PARAMVALUE_YES)) {
@@ -2027,7 +2006,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // props = new Properties();
     props = Configuration.instance();
 
-    if (props.getProperty(PROP_POOLING, PARAMVALUE_YES).equals(PARAMVALUE_YES)) {
+    if (props.getProperty(PROP_POOLING, PARAMVALUE_YES)
+        .equals(PARAMVALUE_YES)) {
       poolConnect.setSelected(true);
     } else {
       poolConnect.setSelected(false);
@@ -2074,7 +2054,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * @param pPassword
    *          The password field
    */
-  private void setupDBPool(String connectURI, String pUserId, String pPassword) {
+  private void setupDBPool(String connectURI, String pUserId,
+      String pPassword) {
     removeDBPool();
 
     try {
@@ -2115,8 +2096,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    *       commons library.
    */
   private void configurePool(GenericObjectPool connectionPool,
-      String connectURI, String pUserId, String pPassword) throws
-      Exception {
+      String connectURI, String pUserId, String pPassword) throws Exception {
     String lowerCaseConnectURI;
     String validationQuery;
 
@@ -2136,8 +2116,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // Pool settings - someday a dialog and persistence should be
     // added to put these under user control
     connectionPool.setMaxActive(1);
-    connectionPool.setWhenExhaustedAction(GenericObjectPool.
-        WHEN_EXHAUSTED_BLOCK);
+    connectionPool
+        .setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
     connectionPool.setMaxWait(CONN_POOL_MAX_WAIT_MS);
     connectionPool.setMaxIdle(CONN_POOL_MAX_IDLE_CONNECTIONS);
     connectionPool
@@ -2145,11 +2125,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     connectionPool.setNumTestsPerEvictionRun(CONN_POOL_NUM_TESTS_PER_EVICT_RUN);
     connectionPool.setMinEvictableIdleTimeMillis(CONN_POOL_EVICT_IDLE_TIME_MS);
 
-    final DriverManagerConnectionFactory connectionFactory = new
-        DriverManagerConnectionFactory(connectURI, pUserId, pPassword);
-    final PoolableConnectionFactory poolableConnectionFactory = new
-        PoolableConnectionFactory(connectionFactory, connectionPool, null,
-            null, false, true);
+    final DriverManagerConnectionFactory connectionFactory = new DriverManagerConnectionFactory(
+        connectURI, pUserId, pPassword);
+    final PoolableConnectionFactory poolableConnectionFactory = new PoolableConnectionFactory(
+        connectionFactory, connectionPool, null,
+        null, false, true);
 
     if (validationQuery != null) {
       connectionPool.setTestOnBorrow(true);
@@ -2210,8 +2190,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuFileOpenAccel"),
         ActionEvent.ALT_MASK));
     fileOpenSQL.setMnemonic(Resources.getChar("mnuFileOpenAccel"));
-    fileOpenSQL.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuFileOpenDesc"));
+    fileOpenSQL.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuFileOpenDesc"));
     fileOpenSQL.addActionListener(this);
     fileOpenSQL.setEnabled(true);
     menu.add(fileOpenSQL);
@@ -2237,8 +2217,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     fileLogResults.setAccelerator(KeyStroke.getKeyStroke(Resources.getChar(
         "mnuFileLogResultsAccel"),
         ActionEvent.ALT_MASK));
-    fileLogResults.setMnemonic(Resources.getString("mnuFileLogResultsAccel").
-        charAt(0));
+    fileLogResults
+        .setMnemonic(Resources.getString("mnuFileLogResultsAccel").charAt(0));
     fileLogResults.getAccessibleContext().setAccessibleDescription(
         Resources.getString("mnuFileLogResultsDesc", DBRESULTS_NAME));
     fileLogResults.setEnabled(true);
@@ -2253,8 +2233,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuFileExportCSVAccel"),
         ActionEvent.ALT_MASK));
     fileSaveAsCSV.setMnemonic(Resources.getChar("mnuFileExportCSVAccel"));
-    fileSaveAsCSV.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuFileExportCSVDesc"));
+    fileSaveAsCSV.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuFileExportCSVDesc"));
     fileSaveAsCSV.addActionListener(this);
     fileSaveAsCSV.setEnabled(false);
     menu.add(fileSaveAsCSV);
@@ -2268,8 +2248,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     fileSaveAsTriples.setMnemonic(Resources
         .getChar("mnuFileExportTriplesAccel"));
     fileSaveAsTriples.getAccessibleContext().setAccessibleDescription(
-        Resources.
-            getString("mnuFileExportTriplesDesc"));
+        Resources.getString("mnuFileExportTriplesDesc"));
     fileSaveAsTriples.addActionListener(new ExportResultsAsTriplesListener());
     fileSaveAsTriples.setEnabled(false);
     menu.add(fileSaveAsTriples);
@@ -2280,8 +2259,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuFileSaveBLOBAccel"),
         ActionEvent.ALT_MASK));
     fileSaveBLOBs.setMnemonic(Resources.getChar("mnuFileSaveBLOBAccel"));
-    fileSaveBLOBs.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuFileSaveBLOBDesc"));
+    fileSaveBLOBs.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuFileSaveBLOBDesc"));
     fileSaveBLOBs.addActionListener(this);
     fileSaveBLOBs.setEnabled(false);
     menu.add(fileSaveBLOBs);
@@ -2292,8 +2271,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     fileExportsRaw = new JCheckBoxMenuItem(Resources.getString(
         "mnuFileRawExportLabel"));
     fileExportsRaw.setMnemonic(Resources.getChar("mnuFileRawExportAccel"));
-    fileExportsRaw.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuFileRawExportDesc"));
+    fileExportsRaw.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuFileRawExportDesc"));
     fileExportsRaw.setEnabled(true);
     fileExportsRaw.setSelected(false);
     menu.add(fileExportsRaw);
@@ -2316,8 +2295,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuFileExitAccel"),
         ActionEvent.ALT_MASK));
     fileExit.setMnemonic(Resources.getChar("mnuFileExitAccel"));
-    fileExit.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuFileExitDesc"));
+    fileExit.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuFileExitDesc"));
     fileExit.addActionListener(this);
     fileExit.setEnabled(true);
     menu.add(fileExit);
@@ -2345,8 +2324,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuEditCopyAccel"),
         ActionEvent.ALT_MASK));
     editCopy.setMnemonic(Resources.getChar("mnuEditCopyAccel"));
-    editCopy.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuEditCopyDesc"));
+    editCopy.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuEditCopyDesc"));
     editCopy.addActionListener(this);
     editCopy.setEnabled(true);
     menu.add(editCopy);
@@ -2357,8 +2336,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuEditSelectAllAccel"),
         ActionEvent.ALT_MASK));
     editSelectAll.setMnemonic(Resources.getChar("mnuEditSelectAllAccel"));
-    editSelectAll.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuEditSelectAllDesc"));
+    editSelectAll.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuEditSelectAllDesc"));
     editSelectAll.addActionListener(this);
     editSelectAll.setEnabled(true);
     menu.add(editSelectAll);
@@ -2368,8 +2347,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // Edit | Sort by Selected Columns
     editSort = new JMenuItem(Resources.getString("mnuEditSortLabel"));
     editSort.setMnemonic(Resources.getChar("mnuEditSortAccel"));
-    editSort.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuEditSortDesc"));
+    editSort.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuEditSortDesc"));
     editSort.addActionListener(this);
     editSort.setEnabled(true);
     menu.add(editSort);
@@ -2394,9 +2373,9 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // Query | Select Statement
     queryMakeVerboseSelect = new JMenuItem(Resources.getString(
         "mnuQuerySelectLabel"));
-    queryMakeVerboseSelect.setAccelerator(KeyStroke.getKeyStroke(Resources.
-        getChar("mnuQuerySelectAccel"),
-        ActionEvent.ALT_MASK));
+    queryMakeVerboseSelect.setAccelerator(
+        KeyStroke.getKeyStroke(Resources.getChar("mnuQuerySelectAccel"),
+            ActionEvent.ALT_MASK));
     queryMakeVerboseSelect
         .setMnemonic(Resources.getChar("mnuQuerySelectAccel"));
     queryMakeVerboseSelect.getAccessibleContext().setAccessibleDescription(
@@ -2411,8 +2390,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuQueryInsertAccel"),
         ActionEvent.ALT_MASK));
     queryMakeInsert.setMnemonic(Resources.getChar("mnuQueryInsertAccel"));
-    queryMakeInsert.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuQueryInsertDesc"));
+    queryMakeInsert.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuQueryInsertDesc"));
     queryMakeInsert.addActionListener(this);
     queryMakeInsert.setEnabled(true);
     menu.add(queryMakeInsert);
@@ -2423,8 +2402,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuQueryUpdateAccel"),
         ActionEvent.ALT_MASK));
     queryMakeUpdate.setMnemonic(Resources.getChar("mnuQueryUpdateAccel"));
-    queryMakeUpdate.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuQueryUpdateDesc"));
+    queryMakeUpdate.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuQueryUpdateDesc"));
     queryMakeUpdate.addActionListener(this);
     queryMakeUpdate.setEnabled(true);
     menu.add(queryMakeUpdate);
@@ -2438,8 +2417,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuQuerySelectStarAccel"),
         ActionEvent.ALT_MASK));
     querySelectStar.setMnemonic(Resources.getChar("mnuQuerySelectStarAccel"));
-    querySelectStar.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuQuerySelectStarDesc"));
+    querySelectStar.getAccessibleContext().setAccessibleDescription(
+        Resources.getString("mnuQuerySelectStarDesc"));
     querySelectStar.addActionListener(this);
     querySelectStar.setEnabled(true);
     menu.add(querySelectStar);
@@ -2453,8 +2432,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     queryDescribeStar.setMnemonic(Resources.getChar(
         "mnuQueryDescSelectStarAccel"));
     queryDescribeStar.getAccessibleContext().setAccessibleDescription(
-        Resources.
-            getString("mnuQueryDescSelectStarDesc"));
+        Resources.getString("mnuQueryDescSelectStarDesc"));
     queryDescribeStar.addActionListener(this);
     queryDescribeStar.setEnabled(true);
     menu.add(queryDescribeStar);
@@ -2464,8 +2442,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // Query | Reorder Queries
     querySetOrder = new JMenuItem(Resources.getString("mnuQueryReorderLabel"));
     querySetOrder.setMnemonic(Resources.getChar("mnuQueryReorderAccel"));
-    querySetOrder.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuQueryReorderDesc"));
+    querySetOrder.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuQueryReorderDesc"));
     querySetOrder.addActionListener(this);
     querySetOrder.setEnabled(true);
     menu.add(querySetOrder);
@@ -2478,8 +2456,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuQueryRunAllAccel"),
         ActionEvent.ALT_MASK));
     queryRunAll.setMnemonic(Resources.getChar("mnuQueryRunAllAccel"));
-    queryRunAll.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuQueryRunAllDesc"));
+    queryRunAll.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuQueryRunAllDesc"));
     queryRunAll.addActionListener(this);
     queryRunAll.setEnabled(true);
     menu.add(queryRunAll);
@@ -2521,8 +2499,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     }
     configLanguageDefault.setMnemonic(Resources.getChar(
         "mnuSetupLanguageDefaultAccel"));
-    configLanguageDefault.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configLanguageDefault.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupLanguageDefaultDesc"));
     configLanguageDefault.addActionListener(this);
     subMenu.add(configLanguageDefault);
@@ -2532,8 +2510,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupLanguageGermanLabel"));
     configLanguageGerman.setMnemonic(Resources.getChar(
         "mnuSetupLanguageGermanAccel"));
-    configLanguageGerman.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configLanguageGerman.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupLanguageGermanDesc"));
     configLanguageGerman.addActionListener(this);
     subMenu.add(configLanguageGerman);
@@ -2543,8 +2521,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupLanguageEnglishLabel"));
     configLanguageEnglish.setMnemonic(Resources.getChar(
         "mnuSetupLanguageEnglishAccel"));
-    configLanguageEnglish.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configLanguageEnglish.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupLanguageEnglishDesc"));
     configLanguageEnglish.addActionListener(this);
     subMenu.add(configLanguageEnglish);
@@ -2554,8 +2532,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupLanguageSpanishLabel"));
     configLanguageSpanish.setMnemonic(Resources.getChar(
         "mnuSetupLanguageSpanishAccel"));
-    configLanguageSpanish.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configLanguageSpanish.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupLanguageSpanishDesc"));
     configLanguageSpanish.addActionListener(this);
     subMenu.add(configLanguageSpanish);
@@ -2565,8 +2543,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupLanguageFrenchLabel"));
     configLanguageFrench.setMnemonic(Resources.getChar(
         "mnuSetupLanguageFrenchAccel"));
-    configLanguageFrench.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configLanguageFrench.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupLanguageFrenchDesc"));
     configLanguageFrench.addActionListener(this);
     subMenu.add(configLanguageFrench);
@@ -2576,8 +2554,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupLanguageItalianLabel"));
     configLanguageItalian.setMnemonic(Resources.getChar(
         "mnuSetupLanguageItalianAccel"));
-    configLanguageItalian.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configLanguageItalian.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupLanguageItalianDesc"));
     configLanguageItalian.addActionListener(this);
     subMenu.add(configLanguageItalian);
@@ -2587,8 +2565,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupLanguagePortugueseLabel"));
     configLanguagePortuguese.setMnemonic(Resources.getChar(
         "mnuSetupLanguagePortugueseAccel"));
-    configLanguagePortuguese.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configLanguagePortuguese.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupLanguagePortugueseDesc"));
     configLanguagePortuguese.addActionListener(this);
     subMenu.add(configLanguagePortuguese);
@@ -2626,8 +2604,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // Setup | Font
     configFont = new JMenuItem(Resources.getString("mnuConfigFontLabel"));
     configFont.setMnemonic(Resources.getChar("mnuConfigFontAccel"));
-    configFont.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuConfigFontDesc"));
+    configFont.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuConfigFontDesc"));
     configFont.addActionListener(this);
     configFont.setEnabled(true);
     menu.add(configFont);
@@ -2645,8 +2623,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupDBServerNoneLabel"));
     configDisplayDBServerInfoNone.setMnemonic(Resources.getChar(
         "mnuSetupDBServerNoneAccel"));
-    configDisplayDBServerInfoNone.getAccessibleContext().
-        setAccessibleDescription(
+    configDisplayDBServerInfoNone.getAccessibleContext()
+        .setAccessibleDescription(
             Resources.getString("mnuSetupDBServerNoneDesc"));
     subMenu.add(configDisplayDBServerInfoNone);
 
@@ -2655,8 +2633,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupDBServerBriefLabel"));
     configDisplayDBServerInfoShort.setMnemonic(Resources.getChar(
         "mnuSetupDBServerBriefAccel"));
-    configDisplayDBServerInfoShort.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configDisplayDBServerInfoShort.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupDBServerBriefDesc"));
     subMenu.add(configDisplayDBServerInfoShort);
 
@@ -2665,8 +2643,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupDBServerLongLabel"));
     configDisplayDBServerInfoLong.setMnemonic(Resources.getChar(
         "mnuSetupDBServerLongAccel"));
-    configDisplayDBServerInfoLong.getAccessibleContext().
-        setAccessibleDescription(
+    configDisplayDBServerInfoLong.getAccessibleContext()
+        .setAccessibleDescription(
             Resources.getString("mnuSetupDBServerLongDesc"));
     subMenu.add(configDisplayDBServerInfoLong);
 
@@ -2691,9 +2669,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupRowColorNoneLabel"));
     configTableColoringNone.setMnemonic(Resources.getChar(
         "mnuSetupRowColorNoneAccel"));
-    configTableColoringNone.getAccessibleContext().
-        setAccessibleDescription(
-            Resources.getString("mnuSetupRowColorNoneDesc"));
+    configTableColoringNone.getAccessibleContext().setAccessibleDescription(
+        Resources.getString("mnuSetupRowColorNoneDesc"));
     configTableColoringNone.addActionListener(this);
     subMenu.add(configTableColoringNone);
 
@@ -2702,8 +2679,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupRowColorGreenBarLabel"));
     configTableColoringGreenBar.setMnemonic(Resources.getChar(
         "mnuSetupRowColorGreenBarAccel"));
-    configTableColoringGreenBar.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configTableColoringGreenBar.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupRowColorGreenBarDesc"));
     configTableColoringGreenBar.addActionListener(this);
     subMenu.add(configTableColoringGreenBar);
@@ -2713,8 +2690,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupRowColorYellowBarLabel"));
     configTableColoringYellowBar.setMnemonic(Resources.getChar(
         "mnuSetupRowColorYellowBarAccel"));
-    configTableColoringYellowBar.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configTableColoringYellowBar.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupRowColorYellowBarDesc"));
     configTableColoringYellowBar.addActionListener(this);
     subMenu.add(configTableColoringYellowBar);
@@ -2726,8 +2703,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupRowColorUserDefLabel"));
     configTableColoringUserDefined.setMnemonic(Resources.getChar(
         "mnuSetupRowColorUserDefAccel"));
-    configTableColoringUserDefined.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configTableColoringUserDefined.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupRowColorUserDefDesc"));
     configTableColoringUserDefined.addActionListener(this);
     subMenu.add(configTableColoringUserDefined);
@@ -2750,8 +2727,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         "mnuSetupAssocSQLURLAccel"));
     configHistoryAssocSQLAndConnect
         .getAccessibleContext()
-        .
-        setAccessibleDescription(Resources.getString("mnuSetupAssocSQLURLDesc"));
+        .setAccessibleDescription(
+            Resources.getString("mnuSetupAssocSQLURLDesc"));
     configHistoryAssocSQLAndConnect.setEnabled(true);
     menu.add(configHistoryAssocSQLAndConnect);
 
@@ -2760,8 +2737,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         Resources.getString("mnuSetupParseSQLSemicolonLabel"));
     configParseSemicolons.setMnemonic(Resources.getChar(
         "mnuSetupParseSQLSemicolonAccel"));
-    configParseSemicolons.getAccessibleContext().
-        setAccessibleDescription(Resources.getString(
+    configParseSemicolons.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString(
             "mnuSetupParseSQLSemicolonDesc"));
     configParseSemicolons.setEnabled(true);
     menu.add(configParseSemicolons);
@@ -2836,8 +2813,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // Help | About
     helpAbout = new JMenuItem(Resources.getString("mnuHelpAboutLabel"));
     helpAbout.setMnemonic(Resources.getChar("mnuHelpAboutAccel"));
-    helpAbout.getAccessibleContext().setAccessibleDescription(Resources.
-        getString("mnuHelpAboutDesc"));
+    helpAbout.getAccessibleContext()
+        .setAccessibleDescription(Resources.getString("mnuHelpAboutDesc"));
     helpAbout.addActionListener(this);
     helpAbout.setEnabled(true);
     menu.add(helpAbout);
@@ -2881,8 +2858,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     drivers = null;
 
     try {
-      drivers = new BufferedReader(new FileReader(Configuration.instance().
-          getFile(FILENAME_DRIVERS)));
+      drivers = new BufferedReader(
+          new FileReader(Configuration.instance().getFile(FILENAME_DRIVERS)));
       while ((driverName = drivers.readLine()) != null) {
         if (driverName.trim().length() > 0) {
           isFromFile = true;
@@ -2997,10 +2974,10 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     Constructor<?> constructDriver;
 
     try {
-      constructDriver = Class.forName(driverClass, true, dbClassLoader).
-          getConstructor();
-      DriverManager.registerDriver(new DynamicDriver((Driver) constructDriver.
-          newInstance()));
+      constructDriver = Class.forName(driverClass, true, dbClassLoader)
+          .getConstructor();
+      DriverManager.registerDriver(
+          new DynamicDriver((Driver) constructDriver.newInstance()));
 
       messageOut(Resources.getString("msgDriverLoaded", productName),
           STYLE_GREEN);
@@ -3051,6 +3028,37 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   }
 
   /**
+   * Checks whether an input connect string is already in its
+   * associated combo box. If not, the new information is added to the combo
+   * list
+   * 
+   * @param combo
+   *          JComboBox which has a list of connect strings.
+   */
+  private void checkForNewString(JComboBox<String> combo) {
+    String newValue;
+    int checkDups;
+    boolean match;
+
+    newValue = (String) combo.getEditor().getItem();
+
+    if (newValue.toString().length() > 0) {
+      match = false;
+      for (checkDups = 0; checkDups < combo.getItemCount()
+          && !match; ++checkDups) {
+        if (newValue.equals(combo.getItemAt(checkDups))) {
+          match = true;
+          combo.setSelectedIndex(checkDups);
+        }
+      }
+
+      if (!match) {
+        addToCombo(combo, newValue);
+      }
+    }
+  }
+
+  /**
    * Checks whether an input (query or connect string) is already in its
    * associated combo box. If not, the new information is added to the combo
    * list
@@ -3059,83 +3067,38 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    *          JComboBox which has a list of the query statements or connect
    *          strings.
    */
-  private void checkForNewString(JComboBox combo) {
+  private void checkForNewQuery(JComboBox<Query> combo) {
     // String newString, foundString;
-    Object newValue;
+    Query newValue;
     int checkDups, matchAt;
     boolean match;
-    // boolean newCommented, foundCommented;
 
-    // newCommented = foundCommented = false;
     matchAt = -1;
 
-    if (combo == querySelection) {
-      newValue = new Query(queryText.getText(), whichModeValue());
-      // newString = queryText.getText();
-      // newString = newString.replace('\n', ' ');
-    } else {
-      // newString = (String)combo.getEditor().getItem();
-      newValue = combo.getEditor().getItem();
-    }
+    newValue = new Query(queryText.getText(), whichModeValue());
 
-    // if (newString.startsWith(COMMENT_PREFIX)) {
-    // newCommented = true;
-    // newString = newString.substring(2);
-    // }
-
-    // if (newString.trim().length() > 0) {
     if (newValue.toString().length() > 0) {
       match = false;
-      for (checkDups = 0; checkDups < combo.getItemCount() && !match; ++checkDups) {
-        // if (combo == querySelection) {
-        // foundString = ((Query)combo.getItemAt(checkDups)).getSQL();
-        // } else {
-        // foundString = ((String)combo.getItemAt(checkDups));
-        // }
+      for (checkDups = 0; checkDups < combo.getItemCount()
+          && !match; ++checkDups) {
 
-        // if (foundString.startsWith(COMMENT_PREFIX)) {
-        // foundString = foundString.substring(2);
-        // foundCommented = true;
-        // } else {
-        // foundCommented = false;
-        // }
-
-        // if (newString.equals(foundString)) {
         if (newValue.equals(combo.getItemAt(checkDups))) {
           match = true;
-          if (combo == querySelection) {
-            ((Query) combo.getItemAt(checkDups)).setMode(whichModeValue());
-          }
+          combo.getItemAt(checkDups).setMode(whichModeValue());
           combo.setSelectedIndex(checkDups);
           matchAt = checkDups;
         }
       }
 
-      // if (newCommented) {
-      // newString = COMMENT_PREFIX + newString;
-      // }
-
       if (!match) {
         addToCombo(combo, newValue);
-        if (combo == querySelection) {
-          // addToCombo(combo, new Query(newString, whichModeValue()));
-          combo.setSelectedIndex(combo.getModel().getSize() - 1);
-          matchAt = combo.getSelectedIndex();
-        }
+        combo.setSelectedIndex(combo.getModel().getSize() - 1);
+        matchAt = combo.getSelectedIndex();
       }
-      // if (foundCommented != newCommented) {
-      // if (combo == querySelection) {
-      // replaceInCombo(combo, matchAt,
-      // new Query(newString, whichModeValue()));
-      // } else {
-      // replaceInCombo(combo, matchAt, newString);
-      // }
-      // }
-      if (combo == querySelection) {
-        if (((Query) newValue).isCommented() != ((Query) combo
-            .getSelectedItem()).isCommented()) {
-          replaceInCombo(combo, matchAt, newValue);
-        }
+
+      if (((Query) newValue).isCommented() != ((Query) combo
+          .getSelectedItem()).isCommented()) {
+        replaceInCombo(combo, matchAt, newValue);
       }
     }
   }
@@ -3203,8 +3166,20 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * @param newData
    *          The Object that is to be added
    */
-  private void addToCombo(JComboBox combo, Object newData) {
-    ((DefaultComboBoxModel) combo.getModel()).addElement(newData);
+  private void addToCombo(JComboBox<String> combo, String newData) {
+    ((DefaultComboBoxModel<String>) combo.getModel()).addElement(newData);
+  }
+
+  /**
+   * Adds a new object in the combo box
+   * 
+   * @param combo
+   *          The JComboBox
+   * @param newData
+   *          The Object that is to be added
+   */
+  private void addToCombo(JComboBox<Query> combo, Query newData) {
+    ((DefaultComboBoxModel<Query>) combo.getModel()).addElement(newData);
   }
 
   /**
@@ -3218,9 +3193,10 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * @param newData
    *          The new Object that is to be inserted in the combobox
    */
-  private void replaceInCombo(JComboBox combo, int position, Object newData) {
-    ((DefaultComboBoxModel) combo.getModel()).removeElementAt(position);
-    ((DefaultComboBoxModel) combo.getModel()).insertElementAt(newData,
+  private void replaceInCombo(JComboBox<Query> combo, int position,
+      Query newData) {
+    ((DefaultComboBoxModel<Query>) combo.getModel()).removeElementAt(position);
+    ((DefaultComboBoxModel<Query>) combo.getModel()).insertElementAt(newData,
         position);
     combo.setSelectedIndex(position);
   }
@@ -3367,7 +3343,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       JOptionPane.showMessageDialog(this,
           Utility.characterInsert(pMessage, "\n",
               TEXT_WRAP_MIN_LINE_LENGTH_BEFORE_WRAP, TEXT_WRAP_MAX_LINE_LENGTH,
-              " .,"), title, messageType);
+              " .,"),
+          title, messageType);
     } else {
       JOptionPane.showMessageDialog(this, pMessage, title, messageType);
     }
@@ -3548,7 +3525,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
           "msgExecuteQuery",
           asQuery.isSelected() ? Resources.getString("msgQuery")
               : asDescribe.isSelected()
-                  ? Resources.getString("msgDescribe") : Resources
+                  ? Resources.getString("msgDescribe")
+                  : Resources
                       .getString("msgUpdate"),
           sqlStatement), STYLE_BOLD);
       if (poolConnect.isSelected()) {
@@ -3563,10 +3541,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
           messageOut(Resources.getString("msgPoolNone"));
         }
       }
-      if ((poolConnect.isSelected() && getDBPool() == null) || 
-          /* conn == null */
+      if ((poolConnect.isSelected() && getDBPool() == null) ||
+      /* conn == null */
           !((String) connectString.getEditor().getItem()).equals(
-          lastConnection) || !userId.getText().equals(lastUserId)
+              lastConnection)
+          || !userId.getText().equals(lastUserId)
           || !new String(password.getPassword()).equals(lastPassword)) {
 
         if (poolConnect.isSelected()) {
@@ -3605,7 +3584,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
       conn.setAutoCommit(autoCommit.isSelected());
       conn.setReadOnly(readOnly.isSelected());
-      
+
       reportConnectionStats(conn);
 
       if (!hasParams) {
@@ -3627,7 +3606,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       } catch (Exception any) {
         LOGGER.warn("Unable to set maximum rows", any);
         messageOut(Resources.getString("errFailSetMaxRows",
-            (String) maxRows.getSelectedItem(), any.getMessage()), STYLE_YELLOW);
+            (String) maxRows.getSelectedItem(), any.getMessage()),
+            STYLE_YELLOW);
       }
 
       if (asQuery.isSelected() || asDescribe.isSelected()) {
@@ -3747,7 +3727,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
                 STYLE_RED);
             LOGGER.error(
                 "Failed to save data to triples file: "
-                    + tripleFile.getAbsolutePath(), throwable);
+                    + tripleFile.getAbsolutePath(),
+                throwable);
           }
         } else if (fileLogResults.isSelected()) {
           writeDataAsCSV(sqlStatement, model, DBRESULTS_NAME, result, myType,
@@ -3810,8 +3791,9 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
           if (configDisplayColumnDataType.isSelected()) {
             colLabel += " [";
             colLabel += myType[col] == 0 ? Resources
-                .getString("proColCharType") : Resources
-                .getString("proColNumeric");
+                .getString("proColCharType")
+                : Resources
+                    .getString("proColNumeric");
             colLabel += "]";
           }
 
@@ -3838,25 +3820,29 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
                     + meta.getColumnType(col + 1) + ")";
                 break;
               case DESC_TABLE_LENGTH_COLUMN: // Length
-                value = new Integer(meta.getColumnDisplaySize(col + 1));
+                value = meta.getColumnDisplaySize(col + 1);
                 break;
               case DESC_TABLE_PRECISION_COLUMN: // Precision
                 try {
-                  value = new Integer(meta.getPrecision(col + 1));
+                  value = meta.getPrecision(col + 1);
                 } catch (Exception any) {
                   value = "?";
                   LOGGER.warn("Unable to obtain column precision", any);
                 }
                 break;
               case DESC_TABLE_SCALE_COLUMN: // Scale
-                value = new Integer(meta.getScale(col + 1));
+                value = meta.getScale(col + 1);
                 break;
               case DESC_TABLE_NULLS_OK_COLUMN: // Nulls Okay?
-                value = meta.isNullable(col + 1) == ResultSetMetaData.columnNullable ? Resources
-                    .getString("proYes")
-                    : meta.isNullable(col + 1) == ResultSetMetaData.columnNoNulls ? Resources
-                        .getString("proNo")
-                        : Resources.getString("proUnknown");
+                value = meta
+                    .isNullable(col + 1) == ResultSetMetaData.columnNullable
+                        ? Resources
+                            .getString("proYes")
+                        : meta.isNullable(
+                            col + 1) == ResultSetMetaData.columnNoNulls
+                                ? Resources
+                                    .getString("proNo")
+                                : Resources.getString("proUnknown");
                 break;
               default:
                 value = null;
@@ -4024,7 +4010,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * @param pConn
    *          Connection The DB connection
    */
-//  @SuppressWarnings("unused")
+  // @SuppressWarnings("unused")
   private void reportConnectionStats(Connection pConn) {
     Class<?> connectionClass;
     Method[] allMethods;
@@ -4045,7 +4031,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       msg = new StringBuffer();
       msg.append('\n');
       msg.append(Resources.getString("msgDBServerInfo"));
-      messageOut(msg.toString(), STYLE_SUBTLE);
+      messageOut(msg.toString(), STYLE_BOLD_UL);
 
       try {
         dbMeta = pConn.getMetaData();
@@ -4242,7 +4228,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
                   paramIndex + "") + " ",
                   STYLE_SUBTLE, false);
               messageOut("" + stmt.getInt(paramIndex + 1), STYLE_BOLD, true);
-              values.add(new Integer(stmt.getInt(paramIndex + 1)));
+              values.add(stmt.getInt(paramIndex + 1));
               break;
             default:
               messageOut(Resources.getString("msgParamDefault",
@@ -4300,7 +4286,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
           .replace(
               sqlStatement,
               sqlStatement.substring(beginPosit, endPosit
-                  + PARAM_TOKEN_END_LENGTH), "?",
+                  + PARAM_TOKEN_END_LENGTH),
+              "?",
               0, false);
       messageOut(Resources.getString("msgParamSearchLoopBefore", sqlStatement));
     }
@@ -4344,7 +4331,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * @param params
    *          The list of parameters
    */
-  private void setupCall(CallableStatement stmt, List<StatementParameter> params) {
+  private void setupCall(CallableStatement stmt,
+      List<StatementParameter> params) {
     int paramIndex;
     StatementParameter param;
 
@@ -4613,7 +4601,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       messageOut("");
       messageOut(Resources.getString("proClientEnv") + " ", STYLE_BOLD_UL);
       messageOut(runStats);
-      
+
       // TODO show VM info with correct resources for labeling
       RuntimeMXBean runtimeBean = ManagementFactory.getRuntimeMXBean();
       messageOut("JVM: " + runtimeBean.getName(), STYLE_SUBTLE);
@@ -4628,7 +4616,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     }
 
     if (poolConnect.isSelected()) {
-      messageOut(Resources.getString("msgPoolStats") + " ", STYLE_SUBTLE, false);
+      messageOut(Resources.getString("msgPoolStats") + " ", STYLE_SUBTLE,
+          false);
       messageOut(Resources.getString("msgPoolStatsCount",
           getDBPool().getNumActive() + "", getDBPool().getNumIdle() + ""));
     }
@@ -4689,10 +4678,10 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * combo boxes
    */
   private void saveConfig() {
-    writeOutCombo(querySelection, queryFilename);
-    writeOutCombo(connectString,
-        Configuration.instance().getFile(FILENAME_CONNECTSTRINGS).
-            getAbsolutePath());
+    writeOutComboQuery(querySelection, queryFilename);
+    writeOutComboString(connectString,
+        Configuration.instance().getFile(FILENAME_CONNECTSTRINGS)
+            .getAbsolutePath());
     saveProperties();
   }
 
@@ -4701,24 +4690,21 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * combo boxes
    */
   private void loadConfig() {
-    loadCombo(querySelection, queryFilename);
-    loadCombo(connectString,
-        Configuration.instance().getFile(FILENAME_CONNECTSTRINGS).
-            getAbsolutePath());
+    loadComboQuery(querySelection, queryFilename);
+    loadComboString(connectString,
+        Configuration.instance().getFile(FILENAME_CONNECTSTRINGS)
+            .getAbsolutePath());
   }
 
   /**
-   * Adds the data from the supplied file to the query selection
-   * (or connect URLs) combobox.
+   * Adds the data from the supplied file to the connect URLs combobox.
    * 
    * @param combo
-   *          The JComboBox - it can be the combobox that contains
-   *          all the queries or the combobox with the URLs
+   *          The JComboBox - combobox that contains the URLs
    * @param fileName
-   *          The name of the file that contains the queries or the
-   *          connect URLs
+   *          The name of the file that contains the connect URLs
    */
-  private void loadCombo(JComboBox combo, String fileName) {
+  private void loadComboString(JComboBox<String> combo, String fileName) {
     BufferedReader in;
     String data;
 
@@ -4726,15 +4712,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     try {
       in = new BufferedReader(new FileReader(fileName));
       while ((data = in.readLine()) != null) {
-        if (combo == querySelection) {
-          addToCombo(combo,
-              new Query(data.substring(0, data.lastIndexOf("[")).trim(),
-                  new
-                  Integer(data.substring(data.lastIndexOf("[") + 1).
-                      trim()).intValue()));
-        } else {
-          addToCombo(combo, data);
-        }
+        addToCombo(combo, data);
       }
     } catch (Throwable any) {
       LOGGER.error("Failed to load combo box with lookup values", any);
@@ -4750,17 +4728,51 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   }
 
   /**
-   * Writes all the queries in the query selection (or connection URLS) combobox
+   * Adds the data from the supplied file to the query selection
+   * combobox.
+   * 
+   * @param combo
+   *          The JComboBox - the combobox that contains
+   *          all the queries
+   * @param fileName
+   *          The name of the file that contains the queries
+   */
+  private void loadComboQuery(JComboBox<Query> combo, String fileName) {
+    BufferedReader in;
+    String data;
+
+    in = null;
+    try {
+      in = new BufferedReader(new FileReader(fileName));
+      while ((data = in.readLine()) != null) {
+        addToCombo(combo,
+            new Query(data.substring(0, data.lastIndexOf("[")).trim(),
+                Integer.parseInt(
+                    data.substring(data.lastIndexOf("[") + 1).trim())));
+      }
+    } catch (Throwable any) {
+      LOGGER.error("Failed to load combo box with lookup values", any);
+    } finally {
+      if (in != null) {
+        try {
+          in.close();
+        } catch (Throwable any) {
+          LOGGER.error("Failed to close the input file", any);
+        }
+      }
+    }
+  }
+
+  /**
+   * Writes all the queries in the connection URLS combobox
    * to the supplied file in a print formatted representation.
    * 
    * @param combo
-   *          The JComboBox - it can be the combobox that contains
-   *          all the queries or the combobox with the URLs
+   *          The JComboBox - combobox that contains the URLs
    * @param fileName
-   *          The fileName to be written to contain the queries or the
-   *          connect URLs
+   *          The fileName to be written to contain the connect URLs
    */
-  private void writeOutCombo(JComboBox combo, String fileName) {
+  private void writeOutComboString(JComboBox<String> combo, String fileName) {
     PrintWriter out;
 
     if (combo != null) {
@@ -4768,13 +4780,43 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       try {
         out = new PrintWriter(new FileWriter(fileName));
         for (int i = 0; i < combo.getModel().getSize(); ++i) {
-          if (combo == querySelection) {
-            out.println(((Query) combo.getModel().getElementAt(i)).getSql()
-                + "["
-                + ((Query) combo.getModel().getElementAt(i)).getMode());
-          } else {
-            out.println((String) combo.getModel().getElementAt(i));
+          out.println((String) combo.getModel().getElementAt(i));
+        }
+      } catch (Exception any) {
+        LOGGER.error("Failed to write out the content of the combobox", any);
+      } finally {
+        if (out != null) {
+          try {
+            out.close();
+          } catch (Exception any) {
+            LOGGER.error("Failed to close the combobox output file", any);
           }
+        }
+      }
+    }
+  }
+
+  /**
+   * Writes all the queries in the query selection combobox
+   * to the supplied file in a print formatted representation.
+   * 
+   * @param combo
+   *          The JComboBox - the combobox that contains
+   *          all the queries
+   * @param fileName
+   *          The fileName to be written to contain the queries
+   */
+  private void writeOutComboQuery(JComboBox<Query> combo, String fileName) {
+    PrintWriter out;
+
+    if (combo != null) {
+      out = null;
+      try {
+        out = new PrintWriter(new FileWriter(fileName));
+        for (int i = 0; i < combo.getModel().getSize(); ++i) {
+          out.println(combo.getModel().getElementAt(i).getSql()
+              + "["
+              + combo.getModel().getElementAt(i).getMode());
         }
       } catch (Exception any) {
         LOGGER.error("Failed to write out the content of the combobox", any);
@@ -4812,10 +4854,9 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         if (model.getValueAt(selectedRow, col) instanceof java.sql.Blob) {
           LOGGER.debug("Blob["
               + (java.sql.Blob) model.getValueAt(selectedRow, col) + "]");
-          filesWritten +=
-              writeBlob(model.getColumnName(col),
-                  (java.sql.Blob) model.getValueAt(selectedRow, col))
-                  + "\n";
+          filesWritten += writeBlob(model.getColumnName(col),
+              (java.sql.Blob) model.getValueAt(selectedRow, col))
+              + "\n";
         }
       }
       userMessage(Resources.getString("msgBLOBWrittenText", filesWritten),
@@ -4895,7 +4936,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         + table.getSelectedColumn());
     LOGGER.debug("Row Count:" + table.getSelectedRowCount()
         + " Col Count:" + table.getSelectedColumnCount());
-    if (table.getSelectedRowCount() != 1 || table.getSelectedColumnCount() != 1) {
+    if (table.getSelectedRowCount() != 1
+        || table.getSelectedColumnCount() != 1) {
       userMessage(Resources.getString("errChooseOneCellText"),
           Resources.getString("errChooseOneCellTitle"),
           JOptionPane.ERROR_MESSAGE);
@@ -4911,7 +4953,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         value = "select * from " + value;
         messageOut(Resources.getString("msgMadeSQL", value));
         queryText.setText(value);
-        checkForNewString(querySelection);
+        checkForNewQuery(querySelection);
         querySelection.setSelectedItem(value);
         selectMode(mode);
       }
@@ -4957,7 +4999,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     messageOut(Resources.getString("msgMadeSQL", sqlStatement));
     queryText.setText(sqlStatement);
-    checkForNewString(querySelection);
+    checkForNewQuery(querySelection);
     querySelection.setSelectedItem(sqlStatement);
   }
 
@@ -5011,7 +5053,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     messageOut(Resources.getString("msgMadeSQL", sqlStatement));
     queryText.setText(sqlStatement);
-    checkForNewString(querySelection);
+    checkForNewQuery(querySelection);
     querySelection.setSelectedItem(sqlStatement);
   }
 
@@ -5067,7 +5109,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     messageOut(Resources.getString("msgMadeSQL", sqlStatement));
     queryText.setText(sqlStatement);
-    checkForNewString(querySelection);
+    checkForNewQuery(querySelection);
     querySelection.setSelectedItem(sqlStatement);
   }
 
@@ -5463,13 +5505,13 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     try {
       switch (columnType) {
         case COLUMN_DATA_TYPE_INT: // Integer
-          value = new Integer(result.getInt(columnNumber));
+          value = result.getInt(columnNumber);
           break;
         case COLUMN_DATA_TYPE_LONG: // Long
-          value = new Long(result.getLong(columnNumber));
+          value = result.getLong(columnNumber);
           break;
         case COLUMN_DATA_TYPE_DOUBLE: // Double
-          value = new Double(result.getDouble(columnNumber));
+          value = result.getDouble(columnNumber);
           break;
         case COLUMN_DATA_TYPE_DATETIME: // Date/Time
           value = result.getTimestamp(columnNumber);
@@ -5501,8 +5543,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         LOGGER.error("Error Column["
             + columnNumber + " Type[" + columnType + "]", any);
         messageOut(Resources.getString("errFailDataRead",
-                  "" + columnNumber, any.getMessage()),
-                  STYLE_RED);
+            "" + columnNumber, any.getMessage()),
+            STYLE_RED);
         throw new IllegalStateException("Error Column["
             + columnNumber + " Type[" + columnType + "]");
       }
@@ -5723,7 +5765,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         messageOut("");
         execute(getQuery().getSql(), new ListTableModel<Object>(), exportFile);
       } else {
-        checkForNewString(querySelection);
+        checkForNewQuery(querySelection);
         checkForNewString(connectString);
         processStatement();
       }
@@ -5767,7 +5809,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     monitor = new ProgressMonitor(this,
         Resources.getString("dlgRunAllQueriesProgressTitle"),
         Resources.getString("dlgRunAllQueriesProgressNote",
-            "0", numExecutions + "", "0", numQueries + ""), 0,
+            "0", numExecutions + "", "0", numQueries + ""),
+        0,
         numQueries * Math.abs(numExecutions));
 
     getContentPane().setCursor(new Cursor(Cursor.WAIT_CURSOR));
@@ -5778,7 +5821,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       for (query = 0; !monitor.isCanceled() && query < numQueries; ++query) {
         querySelection.setSelectedIndex(query);
         elapsed = -1;
-        for (execution = 0; !monitor.isCanceled() && execution < numExecutions; ++execution) {
+        for (execution = 0; !monitor.isCanceled()
+            && execution < numExecutions; ++execution) {
           monitor.setProgress(query * numExecutions + execution);
           if (elapsed <= 0) {
             monitor.setNote(Resources.getString("dlgRunAllQueriesProgressNote",
@@ -5812,7 +5856,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       }
     } else {
       elapsed = -1;
-      for (execution = 0; !monitor.isCanceled() && execution < numExecutions; ++execution) {
+      for (execution = 0; !monitor.isCanceled()
+          && execution < numExecutions; ++execution) {
         start = new java.util.Date();
         for (query = 0; !monitor.isCanceled() && query < numQueries; ++query) {
           querySelection.setSelectedIndex(query);
@@ -5928,10 +5973,12 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     // Allow user to choose/create new file for SQL Statements
     fileMenu = new JFileChooser(new File(queryFilename));
 
-    for (FileFilterDefinition filterDefinition : FileFilterDefinition.values()) {
+    for (FileFilterDefinition filterDefinition : FileFilterDefinition
+        .values()) {
       if (filterDefinition.name().startsWith("QUERY")) {
         final FileFilter fileFilter = new SuffixFileFilter(
-            filterDefinition.description(), filterDefinition.acceptedSuffixes());
+            filterDefinition.description(),
+            filterDefinition.acceptedSuffixes());
         if (filterDefinition.isPreferredOption()) {
           preferredFileFilter = fileFilter;
         }
@@ -5973,8 +6020,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         returnVal = JOptionPane.showConfirmDialog(this,
             Resources.getString("dlgNewSQLFileText", chosenSQLFile.getName()),
             Resources.getString("dlgNewSQLFileTitle"),
-            JOptionPane.
-            YES_NO_CANCEL_OPTION,
+            JOptionPane.YES_NO_CANCEL_OPTION,
             JOptionPane.QUESTION_MESSAGE);
         if (returnVal == JOptionPane.NO_OPTION) {
           querySelection.removeAllItems();
@@ -5990,7 +6036,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         setQueryFilename(chosenSQLFile.getAbsolutePath());
         querySelection.removeAllItems();
         queryText.setText("");
-        loadCombo(querySelection, queryFilename);
+        loadComboQuery(querySelection, queryFilename);
         QueryHistory.getInstance().clearAllQueries();
 
         // Update GUI
@@ -6026,8 +6072,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
 
     if (thisQuery >= 0) {
       QueryHistory.getInstance().addQuery(new QueryInfo(thisQuery,
-            connectString.getSelectedIndex(),
-            results));
+          connectString.getSelectedIndex(),
+          results));
     }
 
     // Update GUI
@@ -6043,9 +6089,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   private void setPrevNextIndication() {
     previousQuery
         .setEnabled(QueryHistory.getInstance().hasPrevious()
-            || (QueryHistory.getInstance().getNumberOfQueries() > 0 && QueryHistory
-                .getInstance().getCurrentQueryInfo().getSQLIndex() != querySelection
-                .getSelectedIndex()));
+            || (QueryHistory.getInstance().getNumberOfQueries() > 0
+                && QueryHistory
+                    .getInstance().getCurrentQueryInfo()
+                    .getSQLIndex() != querySelection
+                        .getSelectedIndex()));
     nextQuery.setEnabled(QueryHistory.getInstance().hasNext());
   }
 
@@ -6174,7 +6222,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       // Probably table was empty
       if (LOGGER.isDebugEnabled()) {
         LOGGER.debug(
-              "Error when sorting results, probably no results in model", any);
+            "Error when sorting results, probably no results in model", any);
       }
     }
     table.setModel(new ListTableModel<Object>());
@@ -6194,15 +6242,15 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * dialog is used that permits rearranging the list of queries.
    */
   private void reorderQueries() {
-    List<Object> queries;
+    List<Query> queries;
 
-    queries = new ArrayList<Object>();
+    queries = new ArrayList<>();
 
     for (int loop = 0; loop < querySelection.getItemCount(); ++loop) {
       queries.add(querySelection.getItemAt(loop));
     }
 
-    final ReorderDialog setOrder = new ReorderDialog(this, queries);
+    final ReorderDialog<Query> setOrder = new ReorderDialog<>(this, queries);
 
     if (setOrder.isReordered()) {
       rebuildSQLListing(setOrder.getAsOrdered());
@@ -6215,7 +6263,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    * @param queries
    *          List The collection of queries
    */
-  private void rebuildSQLListing(List<Object> queries) {
+  private void rebuildSQLListing(List<Query> queries) {
     QueryHistory.getInstance().clearAllQueries();
 
     querySelection.removeAllItems();
@@ -6236,8 +6284,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
     selectedModelColumns = new int[selectedViewColumns.length];
 
     for (int column = 0; column < selectedViewColumns.length; ++column) {
-      selectedModelColumns[column] =
-          table.convertColumnIndexToModel(selectedViewColumns[column]);
+      selectedModelColumns[column] = table
+          .convertColumnIndexToModel(selectedViewColumns[column]);
     }
 
     try {
@@ -6267,10 +6315,10 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
         runningQuery = null;
       } else {
         final int decision = JOptionPane.showConfirmDialog(this,
-            Utility.
-                characterInsert(Resources.getString("dlgCancelQueryText"),
-                    "\n",
-                    40, 60, " ."), Resources.getString("dlgCancelQueryTitle"),
+            Utility.characterInsert(Resources.getString("dlgCancelQueryText"),
+                "\n",
+                40, 60, " ."),
+            Resources.getString("dlgCancelQueryTitle"),
             JOptionPane.YES_NO_OPTION,
             JOptionPane.WARNING_MESSAGE);
         if (decision == JOptionPane.YES_OPTION) {
@@ -6411,14 +6459,15 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       objlCopy.actionPerformed(new ActionEvent(table,
           ActionEvent.ACTION_PERFORMED,
           (String) objlCopy.getValue(
-              Action.
-              NAME), EventQueue.getMostRecentEventTime(), 0));
+              Action.NAME),
+          EventQueue.getMostRecentEventTime(), 0));
     } catch (Throwable any) {
       LOGGER.error("Failed to copy data to clipboard", any);
       JOptionPane.showMessageDialog(this,
           Resources.getString("errClipboardCopyDataText",
               any.getClass().getName(), any.getMessage() != null
-                  ? any.getMessage() : ""),
+                  ? any.getMessage()
+                  : ""),
           Resources.getString("errClipboardCopyDataTitle"),
           JOptionPane.ERROR_MESSAGE);
     }
@@ -6501,7 +6550,7 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
    */
   private void checkForNewVersion() {
     final CheckLatestVersion versionCheck = new CheckLatestVersion(VERSION);
-    versionCheck.addObserver(this);
+    versionCheck.addPropertyChangeListener(this);
     new Thread(versionCheck).start();
   }
 
@@ -6670,7 +6719,8 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
       changeLanguage();
     } else if (source == configFont) {
       chooseFont();
-    } else if (source == asDescribe || source == asQuery || source == asUpdate) {
+    } else if (source == asDescribe || source == asQuery
+        || source == asUpdate) {
       setExportAvailable(false);
     }
   }
@@ -6754,11 +6804,11 @@ public class BasicQuery extends JFrame implements Runnable, ActionListener,
   // End WindowListener Interface
 
   @Override
-  public void update(Observable o, Object arg) {
-    LOGGER.debug("Update received from " + o.getClass().getName());
+  public void propertyChange(PropertyChangeEvent evt) {
+    LOGGER.debug("Update received from " + evt.getSource().getClass().getName());
 
-    if (o instanceof CheckLatestVersion) {
-      notifyNewerVersion((NewVersionInformation) arg);
+    if (evt.getSource() instanceof CheckLatestVersion) {
+      notifyNewerVersion((NewVersionInformation) evt.getNewValue());
     }
   }
 

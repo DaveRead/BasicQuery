@@ -1,12 +1,13 @@
 package us.daveread.basicquery.util;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,11 +22,11 @@ import org.apache.log4j.Logger;
  * @author David Read
  * 
  */
-public class CheckLatestVersion extends Observable implements Runnable {
+public class CheckLatestVersion implements Runnable {
   /**
    * URL to version information
    */
-  private static final String VERSION_INFO_URL = "http://monead.com/basicquery/basicquery_version.txt";
+  private static final String VERSION_INFO_URL = "https://monead.com/basicquery/basicquery_version.txt";
 
   /**
    * Logger Instance
@@ -36,6 +37,11 @@ public class CheckLatestVersion extends Observable implements Runnable {
    * Maximum number of lines in the upgrade message
    */
   private static final int MAX_NEW_FEATURES_MESSAGE_LINES = 10;
+
+  /**
+   * Class providing observable support.
+   */
+  private final PropertyChangeSupport pcs = new PropertyChangeSupport(this);
 
   /**
    * The current version of the application
@@ -66,16 +72,25 @@ public class CheckLatestVersion extends Observable implements Runnable {
     currentVersion = pCurrentVersion;
   }
 
+
+  public void addPropertyChangeListener(PropertyChangeListener listener) {
+      this.pcs.addPropertyChangeListener(listener);
+  }
+
+  public void removePropertyChangeListener(PropertyChangeListener listener) {
+      this.pcs.removePropertyChangeListener(listener);
+  }
+
+    
   @Override
   public void run() {
     setupVersionInfo();
 
     if (newVersionInformation != null) {
-      setChanged();
-      notifyObservers(newVersionInformation);
+      this.pcs.firePropertyChange("newVersion", "", newVersionInformation);
     }
   }
-
+  
   /**
    * Get version information from the website and check if any listed versions
    * are newer than the current version.

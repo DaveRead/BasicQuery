@@ -441,10 +441,10 @@ public class Utility {
             if (((Character) stackOfQuotes.get(0)).charValue() == partData[charIndex]) {
               stackOfQuotes.remove(0);
             } else {
-              stackOfQuotes.add(0, new Character(partData[charIndex]));
+              stackOfQuotes.add(0, partData[charIndex]);
             }
           } else {
-            stackOfQuotes.add(0, new Character(partData[charIndex]));
+            stackOfQuotes.add(0, partData[charIndex]);
           }
         } else if (!escapeNext && partData[charIndex] == '\\') {
           escapeNext = true;

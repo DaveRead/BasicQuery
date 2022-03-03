@@ -57,7 +57,7 @@ import us.daveread.basicquery.util.Resources;
  * @author David Read
  */
 
-public class ReorderDialog extends JDialog implements ActionListener,
+public class ReorderDialog<T> extends JDialog implements ActionListener,
     WindowListener,
     ListSelectionListener {
   /**
@@ -78,7 +78,7 @@ public class ReorderDialog extends JDialog implements ActionListener,
   /**
    * List of objects the user can reorder
    */
-  private List<Object> ordered;
+  private List<T> ordered;
 
   /**
    * Detect if the order of the object was changed by the user
@@ -108,12 +108,12 @@ public class ReorderDialog extends JDialog implements ActionListener,
   /**
    * The reordered list of objects
    */
-  private JList reordered;
+  private JList<T> reordered;
 
   /**
    * The model backing the reorderable list display
    */
-  private ReorderListModel<Object> reorderedModel;
+  private ReorderListModel<T> reorderedModel;
 
   /**
    * Constructs the JDialog as a modal dialog and sets-up the components.
@@ -125,7 +125,7 @@ public class ReorderDialog extends JDialog implements ActionListener,
    * @param objects
    *          List The list of data to be presented in the list.
    */
-  public ReorderDialog(JFrame parent, List<Object> objects) {
+  public ReorderDialog(JFrame parent, List<T> objects) {
     super(parent, true);
     ordered = objects;
 
@@ -152,8 +152,8 @@ public class ReorderDialog extends JDialog implements ActionListener,
     getContentPane().setLayout(new BorderLayout());
 
     // Center is list of objects;
-    getContentPane().add(new JScrollPane(reordered = new JList(reorderedModel =
-        new ReorderListModel<Object>(ordered))), BorderLayout.CENTER);
+    getContentPane().add(new JScrollPane(reordered = new JList<T>(reorderedModel =
+        new ReorderListModel<T>(ordered))), BorderLayout.CENTER);
     reordered.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     reordered.addListSelectionListener(this);
     reordered
@@ -227,7 +227,7 @@ public class ReorderDialog extends JDialog implements ActionListener,
    * 
    * @return List The list which may have been reordered.
    */
-  public List<Object> getAsOrdered() {
+  public List<T> getAsOrdered() {
     return ordered;
   }
 

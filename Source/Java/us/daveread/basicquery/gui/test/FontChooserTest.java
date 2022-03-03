@@ -70,7 +70,7 @@ public class FontChooserTest extends TestCase {
   /**
    * Font name choices
    */
-  private JComboBox fontName;
+  private JComboBox<String> fontName;
 
   /**
    * Font size entry
@@ -302,7 +302,7 @@ public class FontChooserTest extends TestCase {
    * @param level
    *          The recursive depth level
    */
-  private void processJComboBox(JComboBox box, int level) {
+  private void processJComboBox(JComboBox<String> box, int level) {
     fontName = box;
 
     LOGGER.debug("Level " + level + " JComboBox: " + box.getName());
@@ -337,6 +337,7 @@ public class FontChooserTest extends TestCase {
    * @param components The collection of components
    * @param level The recursive depth level
    */
+  @SuppressWarnings("unchecked")
   private void displayComponents(Component[] components, int level) {
     for (int findButton = 0; findButton < components.length; ++findButton) {
 
@@ -351,7 +352,7 @@ public class FontChooserTest extends TestCase {
       } else if (components[findButton] instanceof javax.swing.JCheckBox) {
         processJCheckBox((JCheckBox) components[findButton], level + 1);
       } else if (components[findButton] instanceof javax.swing.JComboBox) {
-        processJComboBox((JComboBox) components[findButton], level + 1);
+        processJComboBox((JComboBox<String>) components[findButton], level + 1);
       } else if (components[findButton] instanceof javax.swing.JTextField) {
         processJTextField((JTextField) components[findButton], level + 1);
       } else {

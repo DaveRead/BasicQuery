@@ -27,7 +27,7 @@ import javax.swing.event.ListDataEvent;
  * @param <T> Type of data being reordered
  */
 
-public class ReorderListModel<T> implements ListModel {
+public class ReorderListModel<T> implements ListModel<T> {
   /**
    * List of objects that can be reordered
    */

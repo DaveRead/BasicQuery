@@ -70,7 +70,7 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
   /**
    * The font name choice
    */
-  private JComboBox fontName;
+  private JComboBox<String> fontName;
 
   /**
    * The font bold selection
@@ -139,7 +139,7 @@ public class FontChooser extends JDialog implements ActionListener, KeyListener 
 
     // fontName = new JComboBox(new String[] {"TimesRoman",
     // "Helvetica", "Courier"});
-    fontName = new JComboBox(fontFamilies);
+    fontName = new JComboBox<>(fontFamilies);
     fontName.setSelectedItem(currentFont.getFamily());
     fontName.addActionListener(this);
 
