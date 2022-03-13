@@ -72,7 +72,6 @@ public class CheckLatestVersion implements Runnable {
     currentVersion = pCurrentVersion;
   }
 
-
   public void addPropertyChangeListener(PropertyChangeListener listener) {
       this.pcs.addPropertyChangeListener(listener);
   }
@@ -80,7 +79,6 @@ public class CheckLatestVersion implements Runnable {
   public void removePropertyChangeListener(PropertyChangeListener listener) {
       this.pcs.removePropertyChangeListener(listener);
   }
-
     
   @Override
   public void run() {
